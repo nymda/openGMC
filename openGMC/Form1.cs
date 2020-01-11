@@ -34,7 +34,7 @@ namespace openGMC
         public void beginData(string comPort)
         {
             timer1.Start();
-            string VER_Command = "VER\r";
+            string VER_Command = "<HEARTBEAT1>>";
 
             if (SPORT is SerialPort)
             {
