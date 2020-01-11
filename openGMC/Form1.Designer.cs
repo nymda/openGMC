@@ -39,8 +39,13 @@
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.button2 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -70,8 +75,8 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pictureBox1.Location = new System.Drawing.Point(20, 102);
+            this.pictureBox1.BackColor = System.Drawing.Color.LightGray;
+            this.pictureBox1.Location = new System.Drawing.Point(23, 113);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(768, 336);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -80,25 +85,25 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(755, 12);
+            this.textBox1.Location = new System.Drawing.Point(73, 16);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(33, 20);
+            this.textBox1.Size = new System.Drawing.Size(48, 20);
             this.textBox1.TabIndex = 3;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(718, 15);
+            this.label3.Location = new System.Drawing.Point(6, 19);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(34, 13);
+            this.label3.Size = new System.Drawing.Size(55, 13);
             this.label3.TabIndex = 4;
-            this.label3.Text = "COM:";
+            this.label3.Text = "COM port:";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(721, 38);
+            this.button1.Location = new System.Drawing.Point(9, 42);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(67, 23);
+            this.button1.Size = new System.Drawing.Size(112, 23);
             this.button1.TabIndex = 5;
             this.button1.Text = "Connect";
             this.button1.UseVisualStyleBackColor = true;
@@ -106,9 +111,9 @@
             // 
             // trackBar1
             // 
-            this.trackBar1.Location = new System.Drawing.Point(794, 102);
+            this.trackBar1.Location = new System.Drawing.Point(797, 113);
             this.trackBar1.Maximum = 75;
-            this.trackBar1.Minimum = 10;
+            this.trackBar1.Minimum = 1;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.trackBar1.Size = new System.Drawing.Size(45, 336);
@@ -117,9 +122,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(721, 76);
+            this.button2.Location = new System.Drawing.Point(229, 84);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(67, 23);
+            this.button2.Size = new System.Drawing.Size(57, 23);
             this.button2.TabIndex = 7;
             this.button2.Text = "Snap";
             this.button2.UseVisualStyleBackColor = true;
@@ -128,22 +133,68 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(509, 81);
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
+            this.label4.Location = new System.Drawing.Point(21, 89);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(0, 13);
+            this.label4.Size = new System.Drawing.Size(202, 13);
             this.label4.TabIndex = 8;
+            this.label4.Text = "Documents/00-00-0000-00-00-00-00.PNG";
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Increment = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Location = new System.Drawing.Point(776, 89);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(54, 20);
+            this.numericUpDown1.TabIndex = 9;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            57,
+            0,
+            0,
+            0});
+            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.button1);
+            this.groupBox1.Location = new System.Drawing.Point(703, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(127, 71);
+            this.groupBox1.TabIndex = 10;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Connect";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(700, 91);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(70, 13);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Graph Width:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(842, 450);
+            this.ClientSize = new System.Drawing.Size(842, 459);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.trackBar1);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -153,6 +204,9 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -170,6 +224,9 @@
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label5;
     }
 }
 

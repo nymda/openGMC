@@ -26,6 +26,9 @@ namespace openGMC
         public double minutesElapsed = 0;
         public int s5Count = 0;
 
+        //master graph width length
+        public int listLen = 57;
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
@@ -34,7 +37,7 @@ namespace openGMC
         public void beginData(string comPort)
         {
             timer1.Start();
-            string VER_Command = "VER\r";
+            string VER_Command = "<HEARTBEAT1>>";
 
             if (SPORT is SerialPort)
             {
@@ -49,11 +52,10 @@ namespace openGMC
                     SPORT.Open();
                     SPORT.DiscardOutBuffer();
                     SPORT.DiscardInBuffer();
-
                     SPORT.DataReceived += new SerialDataReceivedEventHandler(responseHandler);
                     SPORT.Write(VER_Command);
                 }
-                catch (Exception exc)
+                catch
                 {
                 }
             }
@@ -96,12 +98,9 @@ namespace openGMC
         }
 
         public List<int> arr = new List<int> { };
-        public int[] graphData = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
         public void shiftReg(int inst)
         {
-            //master int uwu
-            int listLen = 16;
 
             int pxOneBar = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(700 / Convert.ToDouble(listLen))));
 
@@ -129,13 +128,12 @@ namespace openGMC
                 }
             }
 
-            string prnt = "| ";
+            string prnt = "";
             for(int countVarString = 0; countVarString < listLen; countVarString++)
             {
-                prnt += arr[countVarString] + " | ";
+                prnt += arr[countVarString];
             }
             drawGraphFromString(prnt);
-            Console.WriteLine(prnt);
         }
 
         public Bitmap grph = new Bitmap(700, 300);
@@ -144,56 +142,37 @@ namespace openGMC
         {
             int zoom = 25;
             Font font = new Font("Lucida Console", 10.0f);
-
             string time = DateTime.Now.ToString();
-
             this.Invoke(new MethodInvoker(delegate ()
             {
                 zoom = trackBar1.Value;
             }));
-
             List<Point> points = new List<Point> { };
             List<String> values = new List<String> { };
-
-            string processed = gstring.Replace("|", "");
-            processed = processed.Replace(" ", "");
+            string processed = gstring;
             int length = processed.Length;
-
             Graphics g = Graphics.FromImage(grph);
-
-            g.FillRectangle(Brushes.Gray, 0, 0, 700, 300);
-
+            g.FillRectangle(Brushes.LightGray, 0, 0, 700, 300);
             int barWidth = 700 / length;
-
             int currentPos = barWidth / 2;
-
-
-            Point curPoint = new Point();
-
             for(int i = 0; i < length; i++)
-            {           
+            {   
                 points.Add(new Point(690 - currentPos, 280 - Int32.Parse(processed[i].ToString()) * zoom));
                 values.Add(processed[i].ToString());
                 currentPos += barWidth;
             }
-
             int counter = 0;
             foreach (Point p in points)
             {
                 g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 285));
-
-                g.DrawRectangle(Pens.Black, p.X, p.Y, 2, 2);
-
+                g.DrawLine(Pens.Black, p, new Point(p.X, 283));
                 counter++;
             }
-
             for(int o = 1; o < points.Count; o++)
             {
                 g.DrawLine(Pens.Black, points[o], points[o - 1]);
             }
-
             g.DrawString(time, font, Brushes.Black, new Point(10, 10));
-
             pictureBox1.Image = grph;
     }
 
@@ -205,6 +184,7 @@ namespace openGMC
         private void button1_Click(object sender, EventArgs e)
         {
             beginData(textBox1.Text);
+            button1.Enabled = false;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -215,6 +195,11 @@ namespace openGMC
             timeProcessed = timeProcessed.Replace("/", "-");
             pictureBox1.Image.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + timeProcessed + ".png");
             label4.Text = "Documents/" + timeProcessed + ".PNG";
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            listLen = Convert.ToInt32(numericUpDown1.Value);
         }
     }
 }
