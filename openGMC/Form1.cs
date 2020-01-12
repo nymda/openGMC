@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,10 @@ namespace openGMC
         public double minutesElapsed = 0;
         public int s5Count = 0;
         public int maxCPS = 0;
+        public string savePath = "";
+        bool logging = false;
+        bool logPahtSet = false;
+        public List<String> bars = new List<String> { };
 
         //public Series s1;
         //public Series sDummy;
@@ -43,6 +48,8 @@ namespace openGMC
 
         public void beginData(string comPort)
         {
+            bars.Add("openGMC | Logging started");
+
             //s1 = chart1.Series.Add("counts");
             //sDummy = chart1.Series.Add("dummy");
             //chart1.Series["counts"].SetCustomProperty("PixelPointWidth", "20");
@@ -140,6 +147,17 @@ namespace openGMC
                     {
                         label1.Text = "CPM: " + CPM.ToString();
                     }));
+                }
+
+                if (logging && logPahtSet)
+                {
+                    string tickBar = "";
+                    for(int e = 0; e < x + 1; e++)
+                    {
+                        tickBar += "#";
+                    }
+                    bars.Add(DateTime.Now + " : " + tickBar);
+                    File.WriteAllLines(savePath, bars);
                 }
             }
         }
@@ -341,6 +359,34 @@ namespace openGMC
             button4.Enabled = false;
             button5.Enabled = false;
             button6.Enabled = false;
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog dlg = new SaveFileDialog())
+            {
+                dlg.Title = "Open Output File";
+                dlg.Filter = "Text Files | *.txt";
+
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    label6.Text = Path.GetFileName(dlg.FileName); 
+                    savePath = dlg.FileName;
+                    logPahtSet = true;
+                }
+            }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                logging = true;
+            }
+            else
+            {
+                logging = false;
+            }
         }
     }
 }
