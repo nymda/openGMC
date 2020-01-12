@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace openGMC
 {
@@ -25,6 +26,12 @@ namespace openGMC
         public double secondsElapsed = 1;
         public double minutesElapsed = 0;
         public int s5Count = 0;
+        public int maxCPS = 0;
+
+        //public Series s1;
+        //public Series sDummy;
+
+        public int awaitAutoCount = 0;
 
         //master graph width length
         public int listLen = 57;
@@ -36,37 +43,77 @@ namespace openGMC
 
         public void beginData(string comPort)
         {
+            //s1 = chart1.Series.Add("counts");
+            //sDummy = chart1.Series.Add("dummy");
+            //chart1.Series["counts"].SetCustomProperty("PixelPointWidth", "20");
+            //s1.ChartType = SeriesChartType.Range;
+
+            //int rangeMin = 0;
+            //int rangeMax = 20;
+
+            //sDummy.Color = Color.Transparent;
+            //sDummy.IsVisibleInLegend = false;
+            //sDummy.ChartType = SeriesChartType.Point;
+            //sDummy.Points.AddXY(0, rangeMin + 1);
+            //sDummy.Points.AddXY(0, rangeMax - 1);
+
             timer1.Start();
-            string VER_Command = "<HEARTBEAT1>>";
+            SPORT.PortName = "COM" + comPort;
+            SPORT.DataBits = 8;
+            SPORT.Parity = Parity.None;
+            SPORT.StopBits = StopBits.One;
+            SPORT.BaudRate = 57600;
 
-            if (SPORT is SerialPort)
+            try
             {
-                SPORT.PortName = "COM" + comPort;
-                SPORT.DataBits = 8;
-                SPORT.Parity = Parity.None;
-                SPORT.StopBits = StopBits.One;
-                SPORT.BaudRate = 57600;
-
-                try
-                {
-                    SPORT.Open();
-                    SPORT.DiscardOutBuffer();
-                    SPORT.DiscardInBuffer();
-                    SPORT.DataReceived += new SerialDataReceivedEventHandler(responseHandler);
-                    SPORT.Write(VER_Command);
-                }
-                catch
-                {
-                }
+                SPORT.Open();
+                SPORT.DiscardOutBuffer();
+                SPORT.DiscardInBuffer();
+                SPORT.DataReceived += new SerialDataReceivedEventHandler(responseHandler);
             }
+            catch
+            {
+
+            }
+
+            sendCommand("<HEARTBEAT1>>");
+            
+        }
+
+        public void sendCommand(string command)
+        {
+            SPORT.Write(command);
         }
 
         private void responseHandler(object sender, SerialDataReceivedEventArgs args)
         {
             int x = SPORT.ReadByte();
+
             evn = !evn;
             if (evn)
             {
+                if (x > maxCPS)
+                {
+                    maxCPS = x;
+                    awaitAutoCount = 11;
+                }
+
+                if (awaitAutoCount > 0)
+                {
+                    if (awaitAutoCount == 1)
+                    {
+                        this.Invoke(new MethodInvoker(delegate ()
+                        {
+                            snapshot();
+                        }));
+                        awaitAutoCount--;
+                    }
+                    else
+                    {
+                        awaitAutoCount--;
+                    }
+                }
+
                 s5Count++;
                 totalCount += x;
                 minutesElapsed = secondsElapsed / 60;
@@ -146,6 +193,10 @@ namespace openGMC
             this.Invoke(new MethodInvoker(delegate ()
             {
                 zoom = trackBar1.Value;
+
+                //sDummy.Points.Clear();
+                //sDummy.Points.AddXY(0, 0 + 1);
+                //sDummy.Points.AddXY(0, zoom - 1);
             }));
             List<Point> points = new List<Point> { };
             List<String> values = new List<String> { };
@@ -170,11 +221,36 @@ namespace openGMC
             }
             for(int o = 1; o < points.Count; o++)
             {
-                g.DrawLine(Pens.Black, points[o], points[o - 1]);
+                g.DrawLine(Pens.OrangeRed, points[o], points[o - 1]);
             }
+
+            g.DrawString("Z: " + zoom, font, Brushes.Black, new Point(10, 25));
             g.DrawString(time, font, Brushes.Black, new Point(10, 10));
             pictureBox1.Image = grph;
-    }
+
+
+
+            //this.Invoke(new MethodInvoker(delegate ()
+            //{
+                //s1.Points.Clear();
+                //for (int i = 0; i < values.Count(); i++)
+                //{
+                //    double v = 0;
+                //
+                //    if(Convert.ToDouble(values[i]) == 0)
+                //    {
+                //        v = 0.1;
+                //    }
+                //   else
+                //    {
+                //        v = Convert.ToDouble(values[i]);
+                //    }
+                //    //s1.Points.Add(v);
+                //}
+            //}));
+
+
+        }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -189,6 +265,11 @@ namespace openGMC
 
         private void button2_Click(object sender, EventArgs e)
         {
+            snapshot();
+        }
+
+        public void snapshot()
+        {
             string time = DateTime.Now.ToString();
             string timeProcessed = time.Replace(" ", "-");
             timeProcessed = timeProcessed.Replace(":", "-");
@@ -200,6 +281,66 @@ namespace openGMC
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             listLen = Convert.ToInt32(numericUpDown1.Value);
+        }
+
+        private void chart1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            disableBtns();
+            sendCommand("<POWERON>>");
+            System.Threading.Thread.Sleep(1000);
+            sendCommand("<HEARTBEAT1>>");
+            enablBtns();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            disableBtns();
+            sendCommand("<HEARTBEAT0>>");
+            System.Threading.Thread.Sleep(1000);
+            sendCommand("<POWEROFF>>");
+            enablBtns();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            disableBtns();
+            sendCommand("<HEARTBEAT0>>");
+            System.Threading.Thread.Sleep(1000);
+            enablBtns();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            disableBtns();
+            sendCommand("<HEARTBEAT1>>");
+            System.Threading.Thread.Sleep(1000);
+            enablBtns();
+        }
+
+        public void enablBtns()
+        {
+            button3.Enabled = true;
+            button4.Enabled = true;
+            button5.Enabled = true;
+            button6.Enabled = true;
+        }
+
+        public void disableBtns()
+        {
+            button3.Enabled = false;
+            button4.Enabled = false;
+            button5.Enabled = false;
+            button6.Enabled = false;
         }
     }
 }
