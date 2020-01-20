@@ -1,6 +1,6 @@
 ﻿namespace openGMC
 {
-    partial class Form1
+    partial class Main
     {
         /// <summary>
         /// Required designer variable.
@@ -32,7 +32,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.label2 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.GraphPB = new System.Windows.Forms.PictureBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
@@ -42,15 +42,15 @@
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
+            this.DV_On = new System.Windows.Forms.Button();
+            this.DV_Off = new System.Windows.Forms.Button();
+            this.FEEDStop = new System.Windows.Forms.Button();
+            this.FEEDStart = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.GraphPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -82,15 +82,15 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "Total counts: --";
             // 
-            // pictureBox1
+            // GraphPB
             // 
-            this.pictureBox1.BackColor = System.Drawing.Color.LightGray;
-            this.pictureBox1.Location = new System.Drawing.Point(16, 71);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(768, 336);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
+            this.GraphPB.BackColor = System.Drawing.Color.LightGray;
+            this.GraphPB.Location = new System.Drawing.Point(16, 71);
+            this.GraphPB.Name = "GraphPB";
+            this.GraphPB.Size = new System.Drawing.Size(768, 336);
+            this.GraphPB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.GraphPB.TabIndex = 2;
+            this.GraphPB.TabStop = false;
             // 
             // textBox1
             // 
@@ -194,45 +194,45 @@
             this.label5.TabIndex = 11;
             this.label5.Text = "Graph Width:";
             // 
-            // button3
+            // DV_On
             // 
-            this.button3.Location = new System.Drawing.Point(838, 124);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(110, 23);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "DEVICE ON";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.DV_On.Location = new System.Drawing.Point(838, 124);
+            this.DV_On.Name = "DV_On";
+            this.DV_On.Size = new System.Drawing.Size(110, 23);
+            this.DV_On.TabIndex = 6;
+            this.DV_On.Text = "DEVICE ON";
+            this.DV_On.UseVisualStyleBackColor = true;
+            this.DV_On.Click += new System.EventHandler(this.DVOn_Click);
             // 
-            // button4
+            // DV_Off
             // 
-            this.button4.Location = new System.Drawing.Point(838, 153);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(110, 23);
-            this.button4.TabIndex = 7;
-            this.button4.Text = "DEVICE OFF";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.DV_Off.Location = new System.Drawing.Point(838, 153);
+            this.DV_Off.Name = "DV_Off";
+            this.DV_Off.Size = new System.Drawing.Size(110, 23);
+            this.DV_Off.TabIndex = 7;
+            this.DV_Off.Text = "DEVICE OFF";
+            this.DV_Off.UseVisualStyleBackColor = true;
+            this.DV_Off.Click += new System.EventHandler(this.DVOff_Click);
             // 
-            // button5
+            // FEEDStop
             // 
-            this.button5.Location = new System.Drawing.Point(838, 211);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(110, 23);
-            this.button5.TabIndex = 12;
-            this.button5.Text = "STOP FEED";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.FEEDStop.Location = new System.Drawing.Point(838, 211);
+            this.FEEDStop.Name = "FEEDStop";
+            this.FEEDStop.Size = new System.Drawing.Size(110, 23);
+            this.FEEDStop.TabIndex = 12;
+            this.FEEDStop.Text = "STOP FEED";
+            this.FEEDStop.UseVisualStyleBackColor = true;
+            this.FEEDStop.Click += new System.EventHandler(this.FEEDStop_Click);
             // 
-            // button6
+            // FEEDStart
             // 
-            this.button6.Location = new System.Drawing.Point(838, 182);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(110, 23);
-            this.button6.TabIndex = 13;
-            this.button6.Text = "START FEED";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.FEEDStart.Location = new System.Drawing.Point(838, 182);
+            this.FEEDStart.Name = "FEEDStart";
+            this.FEEDStart.Size = new System.Drawing.Size(110, 23);
+            this.FEEDStart.TabIndex = 13;
+            this.FEEDStart.Text = "START FEED";
+            this.FEEDStart.UseVisualStyleBackColor = true;
+            this.FEEDStart.Click += new System.EventHandler(this.FEEDStart_Click);
             // 
             // button7
             // 
@@ -275,30 +275,30 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Logging";
             // 
-            // Form1
+            // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(967, 423);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.button6);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button4);
+            this.Controls.Add(this.FEEDStart);
+            this.Controls.Add(this.FEEDStop);
+            this.Controls.Add(this.DV_On);
+            this.Controls.Add(this.DV_Off);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.trackBar1);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.GraphPB);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Name = "Form1";
+            this.Name = "Main";
             this.Text = "openGMC";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.GraphPB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -315,7 +315,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox GraphPB;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button1;
@@ -325,10 +325,10 @@
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button DV_On;
+        private System.Windows.Forms.Button DV_Off;
+        private System.Windows.Forms.Button FEEDStop;
+        private System.Windows.Forms.Button FEEDStart;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Label label6;

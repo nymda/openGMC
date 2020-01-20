@@ -13,9 +13,9 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace openGMC
 {
-    public partial class Form1 : Form
+    public partial class Main : Form
     {
-        public Form1()
+        public Main()
         {
             InitializeComponent();
         }
@@ -227,7 +227,7 @@ namespace openGMC
 
             g.DrawString("Z: " + zoom, font, Brushes.Black, new Point(10, 25));
             g.DrawString(time, font, Brushes.Black, new Point(10, 10));
-            pictureBox1.Image = grph;
+            GraphPB.Image = grph;
 
 
         }
@@ -250,12 +250,19 @@ namespace openGMC
 
         public void snapshot()
         {
-            string time = DateTime.Now.ToString();
-            string timeProcessed = time.Replace(" ", "-");
-            timeProcessed = timeProcessed.Replace(":", "-");
-            timeProcessed = timeProcessed.Replace("/", "-");
-            pictureBox1.Image.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + timeProcessed + ".png");
-            label4.Text = "Documents/" + timeProcessed + ".PNG";
+            try
+            {
+                string time = DateTime.Now.ToString();
+                string timeProcessed = time.Replace(" ", "-");
+                timeProcessed = timeProcessed.Replace(":", "-");
+                timeProcessed = timeProcessed.Replace("/", "-");
+                GraphPB.Image.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + timeProcessed + ".png");
+                label4.Text = "Documents/" + timeProcessed + ".PNG";
+            }
+            catch
+            {
+
+            }
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -273,7 +280,7 @@ namespace openGMC
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void DVOn_Click(object sender, EventArgs e)
         {
             disableBtns();
             sendCommand("<POWERON>>");
@@ -282,7 +289,7 @@ namespace openGMC
             enablBtns();
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void DVOff_Click(object sender, EventArgs e)
         {
             disableBtns();
             sendCommand("<HEARTBEAT0>>");
@@ -291,7 +298,7 @@ namespace openGMC
             enablBtns();
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void FEEDStop_Click(object sender, EventArgs e)
         {
             disableBtns();
             sendCommand("<HEARTBEAT0>>");
@@ -299,7 +306,7 @@ namespace openGMC
             enablBtns();
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void FEEDStart_Click(object sender, EventArgs e)
         {
             disableBtns();
             sendCommand("<HEARTBEAT1>>");
@@ -309,18 +316,18 @@ namespace openGMC
 
         public void enablBtns()
         {
-            button3.Enabled = true;
-            button4.Enabled = true;
-            button5.Enabled = true;
-            button6.Enabled = true;
+            DV_On.Enabled = true;
+            DV_Off.Enabled = true;
+            FEEDStop.Enabled = true;
+            FEEDStart.Enabled = true;
         }
 
         public void disableBtns()
         {
-            button3.Enabled = false;
-            button4.Enabled = false;
-            button5.Enabled = false;
-            button6.Enabled = false;
+            DV_On.Enabled = false;
+            DV_Off.Enabled = false;
+            FEEDStop.Enabled = false;
+            FEEDStart.Enabled = false;
         }
 
         private void button7_Click(object sender, EventArgs e)
