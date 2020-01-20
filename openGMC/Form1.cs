@@ -33,12 +33,8 @@ namespace openGMC
         bool logPahtSet = false;
         public List<String> bars = new List<String> { };
 
-        //public Series s1;
-        //public Series sDummy;
-
         public int awaitAutoCount = 0;
 
-        //master graph width length
         public int listLen = 57;
 
         private void Form1_Load(object sender, EventArgs e)
@@ -49,20 +45,6 @@ namespace openGMC
         public void beginData(string comPort)
         {
             bars.Add("openGMC | Logging started");
-
-            //s1 = chart1.Series.Add("counts");
-            //sDummy = chart1.Series.Add("dummy");
-            //chart1.Series["counts"].SetCustomProperty("PixelPointWidth", "20");
-            //s1.ChartType = SeriesChartType.Range;
-
-            //int rangeMin = 0;
-            //int rangeMax = 20;
-
-            //sDummy.Color = Color.Transparent;
-            //sDummy.IsVisibleInLegend = false;
-            //sDummy.ChartType = SeriesChartType.Point;
-            //sDummy.Points.AddXY(0, rangeMin + 1);
-            //sDummy.Points.AddXY(0, rangeMax - 1);
 
             timer1.Start();
             SPORT.PortName = "COM" + comPort;
@@ -152,7 +134,7 @@ namespace openGMC
                 if (logging && logPahtSet)
                 {
                     string tickBar = "";
-                    for(int e = 0; e < x + 1; e++)
+                    for(int e = 0; e < x; e++)
                     {
                         tickBar += "#";
                     }
@@ -211,10 +193,6 @@ namespace openGMC
             this.Invoke(new MethodInvoker(delegate ()
             {
                 zoom = trackBar1.Value;
-
-                //sDummy.Points.Clear();
-                //sDummy.Points.AddXY(0, 0 + 1);
-                //sDummy.Points.AddXY(0, zoom - 1);
             }));
             List<Point> points = new List<Point> { };
             List<String> values = new List<String> { };
@@ -233,39 +211,23 @@ namespace openGMC
             int counter = 0;
             foreach (Point p in points)
             {
-                g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 285));
-                g.DrawLine(Pens.Black, p, new Point(p.X, 283));
-                counter++;
-            }
-            for(int o = 1; o < points.Count; o++)
-            {
-                g.DrawLine(Pens.OrangeRed, points[o], points[o - 1]);
+                try
+                {             
+                    g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 285));
+                    g.DrawLine(Pens.Black, p, new Point(p.X, 283));
+                    counter++;
+                    Console.WriteLine(counter + " " + Convert.ToString(counter - 1) + " : " + points.Count());
+                    g.DrawLine(Pens.OrangeRed, points[counter - 1], points[counter - 2]);
+                }
+                catch
+                {
+
+                }
             }
 
             g.DrawString("Z: " + zoom, font, Brushes.Black, new Point(10, 25));
             g.DrawString(time, font, Brushes.Black, new Point(10, 10));
             pictureBox1.Image = grph;
-
-
-
-            //this.Invoke(new MethodInvoker(delegate ()
-            //{
-                //s1.Points.Clear();
-                //for (int i = 0; i < values.Count(); i++)
-                //{
-                //    double v = 0;
-                //
-                //    if(Convert.ToDouble(values[i]) == 0)
-                //    {
-                //        v = 0.1;
-                //    }
-                //   else
-                //    {
-                //        v = Convert.ToDouble(values[i]);
-                //    }
-                //    //s1.Points.Add(v);
-                //}
-            //}));
 
 
         }

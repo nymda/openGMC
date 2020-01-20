@@ -94,9 +94,9 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(73, 16);
+            this.textBox1.Location = new System.Drawing.Point(67, 16);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(48, 20);
+            this.textBox1.Size = new System.Drawing.Size(54, 20);
             this.textBox1.TabIndex = 3;
             // 
             // label3
@@ -268,9 +268,9 @@
             this.groupBox2.Controls.Add(this.checkBox1);
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.button7);
-            this.groupBox2.Location = new System.Drawing.Point(838, 316);
+            this.groupBox2.Location = new System.Drawing.Point(838, 334);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(109, 91);
+            this.groupBox2.Size = new System.Drawing.Size(109, 73);
             this.groupBox2.TabIndex = 17;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Logging";
