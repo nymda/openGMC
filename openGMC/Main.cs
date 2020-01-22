@@ -32,6 +32,9 @@ namespace openGMC
         bool logging = false;
         bool logPahtSet = false;
         public List<String> bars = new List<String> { };
+        public bool useAutoZoom = true;
+        public bool highCps = false;
+        public bool showNumeric = true;
 
         public int awaitAutoCount = 0;
 
@@ -76,7 +79,7 @@ namespace openGMC
 
         private void responseHandler(object sender, SerialDataReceivedEventArgs args)
         {
-            int x = SPORT.ReadByte();
+            int x = int.Parse(SPORT.ReadByte().ToString(), System.Globalization.NumberStyles.HexNumber);
 
             evn = !evn;
             if (evn)
@@ -178,7 +181,7 @@ namespace openGMC
             string prnt = "";
             for(int countVarString = 0; countVarString < listLen; countVarString++)
             {
-                prnt += arr[countVarString];
+                prnt += arr[countVarString] + ",";
             }
             drawGraphFromString(prnt);
         }
@@ -190,33 +193,40 @@ namespace openGMC
             int zoom = 25;
             Font font = new Font("Lucida Console", 10.0f);
             string time = DateTime.Now.ToString();
-            this.Invoke(new MethodInvoker(delegate ()
-            {
-                zoom = trackBar1.Value;
-            }));
+            this.Invoke(new MethodInvoker(delegate (){ zoom = trackBar1.Value; }));
             List<Point> points = new List<Point> { };
             List<String> values = new List<String> { };
-            string processed = gstring;
-            int length = processed.Length;
+            gstring = gstring.Remove(gstring.Length - 1);
+            string[] itms = gstring.Split(',');
+            int length = itms.Length;
             Graphics g = Graphics.FromImage(grph);
             g.FillRectangle(Brushes.LightGray, 0, 0, 700, 300);
             int barWidth = 700 / length;
             int currentPos = barWidth / 2;
-            for(int i = 0; i < length; i++)
-            {   
-                points.Add(new Point(690 - currentPos, 280 - Int32.Parse(processed[i].ToString()) * zoom));
-                values.Add(processed[i].ToString());
+            for(int i = 0; i < length; i++) 
+            {
+                points.Add(new Point(690 - currentPos, 280 - Int32.Parse(itms[i].ToString()) * zoom));
+
+                if(useAutoZoom && (Int32.Parse(itms[i].ToString()) * zoom) > 250)
+                {
+                    zoom -= 5;
+                    this.Invoke(new MethodInvoker(delegate () { trackBar1.Value = zoom; }));
+                }
+
+                values.Add(itms[i].ToString());
                 currentPos += barWidth;
             }
             int counter = 0;
             foreach (Point p in points)
             {
                 try
-                {             
-                    g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 285));
+                {
+                    if (showNumeric)
+                    {
+                        g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 285));
+                    }
                     g.DrawLine(Pens.Black, p, new Point(p.X, 283));
                     counter++;
-                    Console.WriteLine(counter + " " + Convert.ToString(counter - 1) + " : " + points.Count());
                     g.DrawLine(Pens.OrangeRed, points[counter - 1], points[counter - 2]);
                 }
                 catch
@@ -355,6 +365,30 @@ namespace openGMC
             else
             {
                 logging = false;
+            }
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox2.Checked)
+            {
+                useAutoZoom = true;
+            }
+            else
+            {
+                useAutoZoom = false;
+            }
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox3.Checked)
+            {
+                showNumeric = true;
+            }
+            else
+            {
+                showNumeric = false;
             }
         }
     }
