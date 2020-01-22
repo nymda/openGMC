@@ -13,15 +13,16 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace openGMC
 {
-    public partial class Form1 : Form
+    public partial class Main : Form
     {
-        public Form1()
+        public Main()
         {
             InitializeComponent();
         }
 
         public SerialPort SPORT = new SerialPort();
         public bool evn = true;
+        public bool evnTxt = true;
         public int totalCount = 0;
         public double CPM = 0;
         public double secondsElapsed = 1;
@@ -32,13 +33,12 @@ namespace openGMC
         bool logging = false;
         bool logPahtSet = false;
         public List<String> bars = new List<String> { };
+        public bool lowCpsMode = true;
 
-        //public Series s1;
-        //public Series sDummy;
+        public bool autozoom = true;
 
         public int awaitAutoCount = 0;
 
-        //master graph width length
         public int listLen = 57;
 
         private void Form1_Load(object sender, EventArgs e)
@@ -49,20 +49,6 @@ namespace openGMC
         public void beginData(string comPort)
         {
             bars.Add("openGMC | Logging started");
-
-            //s1 = chart1.Series.Add("counts");
-            //sDummy = chart1.Series.Add("dummy");
-            //chart1.Series["counts"].SetCustomProperty("PixelPointWidth", "20");
-            //s1.ChartType = SeriesChartType.Range;
-
-            //int rangeMin = 0;
-            //int rangeMax = 20;
-
-            //sDummy.Color = Color.Transparent;
-            //sDummy.IsVisibleInLegend = false;
-            //sDummy.ChartType = SeriesChartType.Point;
-            //sDummy.Points.AddXY(0, rangeMin + 1);
-            //sDummy.Points.AddXY(0, rangeMax - 1);
 
             timer1.Start();
             SPORT.PortName = "COM" + comPort;
@@ -94,7 +80,8 @@ namespace openGMC
 
         private void responseHandler(object sender, SerialDataReceivedEventArgs args)
         {
-            int x = SPORT.ReadByte();
+
+            int x = int.Parse(SPORT.ReadByte().ToString(), System.Globalization.NumberStyles.HexNumber);
 
             evn = !evn;
             if (evn)
@@ -145,14 +132,14 @@ namespace openGMC
                     s5Count = 0;
                     this.Invoke(new MethodInvoker(delegate ()
                     {
-                        label1.Text = "CPM: " + CPM.ToString();
+                        label1.Text = "CPS: " + x.ToString();
                     }));
                 }
 
                 if (logging && logPahtSet)
                 {
                     string tickBar = "";
-                    for(int e = 0; e < x + 1; e++)
+                    for(int e = 0; e < x; e++)
                     {
                         tickBar += "#";
                     }
@@ -196,7 +183,7 @@ namespace openGMC
             string prnt = "";
             for(int countVarString = 0; countVarString < listLen; countVarString++)
             {
-                prnt += arr[countVarString];
+                prnt += arr[countVarString] + ",";
             }
             drawGraphFromString(prnt);
         }
@@ -211,61 +198,118 @@ namespace openGMC
             this.Invoke(new MethodInvoker(delegate ()
             {
                 zoom = trackBar1.Value;
-
-                //sDummy.Points.Clear();
-                //sDummy.Points.AddXY(0, 0 + 1);
-                //sDummy.Points.AddXY(0, zoom - 1);
             }));
             List<Point> points = new List<Point> { };
             List<String> values = new List<String> { };
-            string processed = gstring;
-            int length = processed.Length;
+            gstring = gstring.Remove(gstring.Length - 1);
+            string[] itms = gstring.Split(',');
+            int length = itms.Length;
             Graphics g = Graphics.FromImage(grph);
             g.FillRectangle(Brushes.LightGray, 0, 0, 700, 300);
             int barWidth = 700 / length;
             int currentPos = barWidth / 2;
+
+            bool detectedOver9 = false;
+
+            foreach(string s in itms)
+            {
+                if (s.Length > 1)
+                {
+                    detectedOver9 = true;
+                }
+            }
+            if (detectedOver9)
+            {
+                lowCpsMode = false;
+            }
+            else
+            {
+                lowCpsMode = true;
+            }
+
             for(int i = 0; i < length; i++)
-            {   
-                points.Add(new Point(690 - currentPos, 280 - Int32.Parse(processed[i].ToString()) * zoom));
-                values.Add(processed[i].ToString());
+            {
+                if (lowCpsMode)
+                {
+                    points.Add(new Point(690 - currentPos, 270 - Int32.Parse(itms[i].ToString()) * zoom));
+                }
+                else
+                {
+                    points.Add(new Point(690 - currentPos, 260 - Int32.Parse(itms[i].ToString()) * zoom));
+                }
+
+
+                if (autozoom)
+                {
+                    if ((Int32.Parse(itms[i].ToString()) * zoom) > 250)
+                    {
+                        zoom = zoom - 5;
+                        this.Invoke(new MethodInvoker(delegate ()
+                        {
+                            trackBar1.Value = zoom;
+                        }));
+                    }
+                }
+
+                values.Add(itms[i].ToString());
                 currentPos += barWidth;
             }
             int counter = 0;
             foreach (Point p in points)
             {
-                g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 285));
-                g.DrawLine(Pens.Black, p, new Point(p.X, 283));
-                counter++;
-            }
-            for(int o = 1; o < points.Count; o++)
-            {
-                g.DrawLine(Pens.OrangeRed, points[o], points[o - 1]);
+                evnTxt = !evnTxt;
+                try
+                {
+                    if (lowCpsMode)
+                    {
+                        g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 275));
+                        g.DrawLine(Pens.Black, p, new Point(p.X, 273));
+                    }
+                    else
+                    {
+                        if (evnTxt)
+                        {
+                            g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 285));
+                        }
+                        else
+                        {
+                            g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 273));
+                        }
+                        g.DrawLine(Pens.Black, p, new Point(p.X, 263));
+                    }
+
+
+                    counter++;
+                    g.DrawLine(Pens.OrangeRed, points[counter - 1], points[counter - 2]);
+
+
+                }
+                catch
+                {
+
+                }
+
+                try
+                {
+                    if (values[counter].Length > 1)
+                    {
+                        lowCpsMode = false;
+                    }
+                }
+                catch
+                {
+
+                }
+
             }
 
+            if (!lowCpsMode)
+            {
+                g.DrawString("!HIGH CPS!", font, Brushes.Red, new Point(10, 40));
+            }
             g.DrawString("Z: " + zoom, font, Brushes.Black, new Point(10, 25));
             g.DrawString(time, font, Brushes.Black, new Point(10, 10));
-            pictureBox1.Image = grph;
-
-
-
-            //this.Invoke(new MethodInvoker(delegate ()
-            //{
-                //s1.Points.Clear();
-                //for (int i = 0; i < values.Count(); i++)
-                //{
-                //    double v = 0;
-                //
-                //    if(Convert.ToDouble(values[i]) == 0)
-                //    {
-                //        v = 0.1;
-                //    }
-                //   else
-                //    {
-                //        v = Convert.ToDouble(values[i]);
-                //    }
-                //    //s1.Points.Add(v);
-                //}
-            //}));
+            GraphPB.Image = grph;
 
 
         }
@@ -288,12 +332,19 @@ namespace openGMC
 
         public void snapshot()
         {
-            string time = DateTime.Now.ToString();
-            string timeProcessed = time.Replace(" ", "-");
-            timeProcessed = timeProcessed.Replace(":", "-");
-            timeProcessed = timeProcessed.Replace("/", "-");
-            pictureBox1.Image.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + timeProcessed + ".png");
-            label4.Text = "Documents/" + timeProcessed + ".PNG";
+            try
+            {
+                string time = DateTime.Now.ToString();
+                string timeProcessed = time.Replace(" ", "-");
+                timeProcessed = timeProcessed.Replace(":", "-");
+                timeProcessed = timeProcessed.Replace("/", "-");
+                GraphPB.Image.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + timeProcessed + ".png");
+                label4.Text = "Documents/" + timeProcessed + ".PNG";
+            }
+            catch
+            {
+
+            }
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -311,7 +362,7 @@ namespace openGMC
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void DVOn_Click(object sender, EventArgs e)
         {
             disableBtns();
             sendCommand("<POWERON>>");
@@ -320,7 +371,7 @@ namespace openGMC
             enablBtns();
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void DVOff_Click(object sender, EventArgs e)
         {
             disableBtns();
             sendCommand("<HEARTBEAT0>>");
@@ -329,7 +380,7 @@ namespace openGMC
             enablBtns();
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void FEEDStop_Click(object sender, EventArgs e)
         {
             disableBtns();
             sendCommand("<HEARTBEAT0>>");
@@ -337,7 +388,7 @@ namespace openGMC
             enablBtns();
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void FEEDStart_Click(object sender, EventArgs e)
         {
             disableBtns();
             sendCommand("<HEARTBEAT1>>");
@@ -347,18 +398,18 @@ namespace openGMC
 
         public void enablBtns()
         {
-            button3.Enabled = true;
-            button4.Enabled = true;
-            button5.Enabled = true;
-            button6.Enabled = true;
+            DV_On.Enabled = true;
+            DV_Off.Enabled = true;
+            FEEDStop.Enabled = true;
+            FEEDStart.Enabled = true;
         }
 
         public void disableBtns()
         {
-            button3.Enabled = false;
-            button4.Enabled = false;
-            button5.Enabled = false;
-            button6.Enabled = false;
+            DV_On.Enabled = false;
+            DV_Off.Enabled = false;
+            FEEDStop.Enabled = false;
+            FEEDStart.Enabled = false;
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -386,6 +437,18 @@ namespace openGMC
             else
             {
                 logging = false;
+            }
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (CB_Autozoom.Checked)
+            {
+                autozoom = true;
+            }
+            else
+            {
+                autozoom = false;
             }
         }
     }
