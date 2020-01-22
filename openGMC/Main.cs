@@ -35,6 +35,7 @@ namespace openGMC
         public bool useAutoZoom = true;
         public bool highCps = false;
         public bool showNumeric = true;
+        public bool evnText = false;
 
         public int awaitAutoCount = 0;
 
@@ -152,7 +153,7 @@ namespace openGMC
         public void shiftReg(int inst)
         {
 
-            int pxOneBar = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(700 / Convert.ToDouble(listLen))));
+            int pxOneBar = 700 / listLen;
 
             if(arr.Count() < listLen)
             {
@@ -201,11 +202,20 @@ namespace openGMC
             int length = itms.Length;
             Graphics g = Graphics.FromImage(grph);
             g.FillRectangle(Brushes.LightGray, 0, 0, 700, 300);
-            int barWidth = 700 / length;
+
+            int barWidth = Convert.ToInt32(Math.Floor(Convert.ToDouble(700 / Convert.ToDouble(listLen))));
             int currentPos = barWidth / 2;
+
             for(int i = 0; i < length; i++) 
             {
-                points.Add(new Point(690 - currentPos, 280 - Int32.Parse(itms[i].ToString()) * zoom));
+                if (!highCps)
+                {
+                    points.Add(new Point(690 - currentPos, 270 - Int32.Parse(itms[i].ToString()) * zoom));
+                }
+                else
+                {
+                    points.Add(new Point(690 - currentPos, 260 - Int32.Parse(itms[i].ToString()) * zoom));
+                }
 
                 if(useAutoZoom && (Int32.Parse(itms[i].ToString()) * zoom) > 250)
                 {
@@ -219,13 +229,61 @@ namespace openGMC
             int counter = 0;
             foreach (Point p in points)
             {
+                evnText = !evnText;
+                bool foundHighCps = false;
+                if(values[counter].Length > 1)
+                {
+                    foundHighCps = true;
+                }
+                if (foundHighCps)
+                {
+                    highCps = true;
+                }
+                else
+                {
+                    highCps = false;
+                }
                 try
                 {
-                    if (showNumeric)
+                    if (!highCps)
                     {
                         g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 285));
+                        g.DrawLine(Pens.Black, p, new Point(p.X, 273));
+                        g.DrawLine(Pens.Black, p, new Point(p.X, 283));
                     }
-                    g.DrawLine(Pens.Black, p, new Point(p.X, 283));
+                    else
+                    {
+                        if (showNumeric)
+                        {
+                            if (evnText)
+                            {
+                                if(values[counter].Length > 1)
+                                {
+                                    g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 9, 285));
+                                }
+                                else
+                                {
+                                    g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 285));
+                                }
+
+                                g.DrawLine(Pens.Black, p, new Point(p.X, 283));
+                            }
+                            else
+                            {
+                                if (values[counter].Length > 1)
+                                {
+                                    g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 9, 273));
+                                }
+                                else
+                                {
+                                    g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 273));
+                                }
+                                g.DrawLine(Pens.Black, p, new Point(p.X, 271));
+                            }
+                        }
+                        g.DrawLine(Pens.Black, p, new Point(p.X, 263));
+                    }
+
                     counter++;
                     g.DrawLine(Pens.OrangeRed, points[counter - 1], points[counter - 2]);
                 }

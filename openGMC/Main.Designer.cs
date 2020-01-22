@@ -90,7 +90,7 @@
             this.GraphPB.Location = new System.Drawing.Point(16, 71);
             this.GraphPB.Name = "GraphPB";
             this.GraphPB.Size = new System.Drawing.Size(768, 336);
-            this.GraphPB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.GraphPB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.GraphPB.TabIndex = 2;
             this.GraphPB.TabStop = false;
             // 
@@ -295,6 +295,7 @@
             this.checkBox3.AutoSize = true;
             this.checkBox3.Checked = true;
             this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox3.Enabled = false;
             this.checkBox3.Location = new System.Drawing.Point(838, 263);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(68, 17);
