@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -75,7 +76,16 @@ namespace openGMC
 
         public void sendCommand(string command)
         {
-            SPORT.Write(command);
+            try
+            {
+                SPORT.Write(command);
+                button1.Enabled = false;
+            }
+            catch
+            {
+                alert("Error", "Error communicating with port");
+            }
+
         }
 
         private void responseHandler(object sender, SerialDataReceivedEventArgs args)
@@ -121,10 +131,7 @@ namespace openGMC
                         label2.Text = "Total counts: " + totalCount.ToString();
                     }));
                 }
-                catch
-                {
-
-                }
+                catch {}
 
                 if (s5Count == 5)
                 {
@@ -184,14 +191,25 @@ namespace openGMC
             {
                 prnt += arr[countVarString] + ",";
             }
-            drawGraphFromString(prnt);
+
+            if (showNumeric)
+            {
+                drawGraphFromString(prnt, 250, 285, 283, 275);
+            }
+            else
+            {
+                drawGraphFromString(prnt, 263, 298, 296, 288);
+            }
+
         }
 
         public Bitmap grph = new Bitmap(700, 300);
 
-        public void drawGraphFromString(string gstring)
+        public void drawGraphFromString(string gstring, int zoom_upper, int str_height, int line_height, int base_height)
         {
             int zoom = 25;
+            int highest = 1;
+
             Font font = new Font("Lucida Console", 10.0f);
             string time = DateTime.Now.ToString();
             this.Invoke(new MethodInvoker(delegate (){ zoom = trackBar1.Value; }));
@@ -201,6 +219,7 @@ namespace openGMC
             string[] itms = gstring.Split(',');
             int length = itms.Length;
             Graphics g = Graphics.FromImage(grph);
+            g.SmoothingMode = SmoothingMode.AntiAlias;
             g.FillRectangle(Brushes.LightGray, 0, 0, 700, 300);
 
             int barWidth = Convert.ToInt32(Math.Floor(Convert.ToDouble(700 / Convert.ToDouble(listLen))));
@@ -208,96 +227,55 @@ namespace openGMC
 
             for(int i = 0; i < length; i++) 
             {
-                if (!highCps)
-                {
-                    points.Add(new Point(690 - currentPos, 270 - Int32.Parse(itms[i].ToString()) * zoom));
-                }
-                else
-                {
-                    points.Add(new Point(690 - currentPos, 260 - Int32.Parse(itms[i].ToString()) * zoom));
-                }
+                points.Add(new Point(690 - currentPos, base_height - Int32.Parse(itms[i].ToString()) * zoom));
 
-                if(useAutoZoom && (Int32.Parse(itms[i].ToString()) * zoom) > 250)
+                if(useAutoZoom && (Int32.Parse(itms[i].ToString()) * zoom) > zoom_upper)
                 {
-                    zoom -= 5;
+                    if(zoom > 6)
+                    {
+                        zoom -= 5;
+                    }
+                    else if(zoom < 6 && zoom > 1)
+                    {
+                        zoom -= 1;
+                    }
                     this.Invoke(new MethodInvoker(delegate () { trackBar1.Value = zoom; }));
                 }
 
                 values.Add(itms[i].ToString());
                 currentPos += barWidth;
+
+                if(Convert.ToInt32(itms[i]) > highest)
+                {
+                    highest = Convert.ToInt32(itms[i]);
+                }
             }
             int counter = 0;
             foreach (Point p in points)
             {
-                evnText = !evnText;
-                bool foundHighCps = false;
-                if(values[counter].Length > 1)
-                {
-                    foundHighCps = true;
-                }
-                if (foundHighCps)
-                {
-                    highCps = true;
-                }
-                else
-                {
-                    highCps = false;
-                }
                 try
                 {
-                    if (!highCps)
+                    if(Convert.ToInt32(values[counter]) == highest && Convert.ToInt32(values[counter]) > 5)
                     {
-                        g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 285));
-                        g.DrawLine(Pens.Black, p, new Point(p.X, 273));
-                        g.DrawLine(Pens.Black, p, new Point(p.X, 283));
+                        g.DrawString(values[counter], font, Brushes.Red, new Point(p.X - 5, p.Y - 15));
+                    }
+
+                    if((Convert.ToInt32(values[counter]) < 10)){
+                        g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, str_height));
                     }
                     else
                     {
-                        if (showNumeric)
-                        {
-                            if (evnText)
-                            {
-                                if(values[counter].Length > 1)
-                                {
-                                    g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 9, 285));
-                                }
-                                else
-                                {
-                                    g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 285));
-                                }
-
-                                g.DrawLine(Pens.Black, p, new Point(p.X, 283));
-                            }
-                            else
-                            {
-                                if (values[counter].Length > 1)
-                                {
-                                    g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 9, 273));
-                                }
-                                else
-                                {
-                                    g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, 273));
-                                }
-                                g.DrawLine(Pens.Black, p, new Point(p.X, 271));
-                            }
-                        }
-                        g.DrawLine(Pens.Black, p, new Point(p.X, 263));
-                    }
-
+                        g.DrawString("+", font, Brushes.Black, new Point(p.X - 6, str_height));
+                    }                  
+                    g.DrawLine(Pens.Black, p, new Point(p.X, line_height));
                     counter++;
-                    g.DrawLine(Pens.OrangeRed, points[counter - 1], points[counter - 2]);
+                    if(counter > 1){g.DrawLine(Pens.OrangeRed, points[counter - 1], points[counter - 2]);}
                 }
-                catch
-                {
-
-                }
+                catch {}
             }
-
             g.DrawString("Z: " + zoom, font, Brushes.Black, new Point(10, 25));
             g.DrawString(time, font, Brushes.Black, new Point(10, 10));
             GraphPB.Image = grph;
-
-
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -308,7 +286,6 @@ namespace openGMC
         private void button1_Click(object sender, EventArgs e)
         {
             beginData(textBox1.Text);
-            button1.Enabled = false;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -327,10 +304,7 @@ namespace openGMC
                 GraphPB.Image.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + timeProcessed + ".png");
                 label4.Text = "Documents/" + timeProcessed + ".PNG";
             }
-            catch
-            {
-
-            }
+            catch {}
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -338,15 +312,9 @@ namespace openGMC
             listLen = Convert.ToInt32(numericUpDown1.Value);
         }
 
-        private void chart1_Click(object sender, EventArgs e)
-        {
+        private void chart1_Click(object sender, EventArgs e) {}
 
-        }
-
-        private void trackBar1_Scroll(object sender, EventArgs e)
-        {
-
-        }
+        private void trackBar1_Scroll(object sender, EventArgs e) {}
 
         private void DVOn_Click(object sender, EventArgs e)
         {
@@ -448,6 +416,17 @@ namespace openGMC
             {
                 showNumeric = false;
             }
+        }
+
+        public void alert(string head, string body)
+        {
+            Form msg = new Msg(head, body);
+            msg.Show();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            alert("info", "sh_info");
         }
     }
 }

@@ -52,6 +52,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.GraphPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
@@ -86,11 +87,14 @@
             // 
             // GraphPB
             // 
+            this.GraphPB.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.GraphPB.BackColor = System.Drawing.Color.LightGray;
             this.GraphPB.Location = new System.Drawing.Point(16, 71);
             this.GraphPB.Name = "GraphPB";
             this.GraphPB.Size = new System.Drawing.Size(768, 336);
-            this.GraphPB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.GraphPB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.GraphPB.TabIndex = 2;
             this.GraphPB.TabStop = false;
             // 
@@ -122,6 +126,8 @@
             // 
             // trackBar1
             // 
+            this.trackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBar1.Location = new System.Drawing.Point(790, 71);
             this.trackBar1.Maximum = 75;
             this.trackBar1.Minimum = 1;
@@ -134,6 +140,7 @@
             // 
             // button2
             // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.Location = new System.Drawing.Point(902, 14);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(58, 23);
@@ -144,6 +151,7 @@
             // 
             // label4
             // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.label4.Location = new System.Drawing.Point(694, 19);
@@ -154,6 +162,7 @@
             // 
             // numericUpDown1
             // 
+            this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.numericUpDown1.Increment = new decimal(new int[] {
             3,
             0,
@@ -177,6 +186,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.button1);
@@ -189,6 +199,7 @@
             // 
             // label5
             // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(693, 49);
             this.label5.Name = "label5";
@@ -198,6 +209,7 @@
             // 
             // DV_On
             // 
+            this.DV_On.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DV_On.Location = new System.Drawing.Point(838, 124);
             this.DV_On.Name = "DV_On";
             this.DV_On.Size = new System.Drawing.Size(110, 23);
@@ -208,6 +220,7 @@
             // 
             // DV_Off
             // 
+            this.DV_Off.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DV_Off.Location = new System.Drawing.Point(838, 153);
             this.DV_Off.Name = "DV_Off";
             this.DV_Off.Size = new System.Drawing.Size(110, 23);
@@ -218,6 +231,7 @@
             // 
             // FEEDStop
             // 
+            this.FEEDStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.FEEDStop.Location = new System.Drawing.Point(838, 211);
             this.FEEDStop.Name = "FEEDStop";
             this.FEEDStop.Size = new System.Drawing.Size(110, 23);
@@ -228,6 +242,7 @@
             // 
             // FEEDStart
             // 
+            this.FEEDStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.FEEDStart.Location = new System.Drawing.Point(838, 182);
             this.FEEDStart.Name = "FEEDStart";
             this.FEEDStart.Size = new System.Drawing.Size(110, 23);
@@ -267,18 +282,20 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.checkBox1);
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.button7);
-            this.groupBox2.Location = new System.Drawing.Point(838, 334);
+            this.groupBox2.Location = new System.Drawing.Point(838, 316);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(109, 73);
+            this.groupBox2.Size = new System.Drawing.Size(109, 91);
             this.groupBox2.TabIndex = 17;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Logging";
             // 
             // checkBox2
             // 
+            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox2.AutoSize = true;
             this.checkBox2.Checked = true;
             this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -292,10 +309,10 @@
             // 
             // checkBox3
             // 
+            this.checkBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox3.AutoSize = true;
             this.checkBox3.Checked = true;
             this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox3.Enabled = false;
             this.checkBox3.Location = new System.Drawing.Point(838, 263);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(68, 17);
@@ -304,11 +321,23 @@
             this.checkBox3.UseVisualStyleBackColor = true;
             this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
+            // button3
+            // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.Location = new System.Drawing.Point(926, 236);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(21, 23);
+            this.button3.TabIndex = 20;
+            this.button3.Text = "?";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(967, 423);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.checkBox3);
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.groupBox2);
@@ -325,7 +354,7 @@
             this.Controls.Add(this.GraphPB);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "Main";
             this.Text = "openGMC";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -366,6 +395,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.Button button3;
     }
 }
 
