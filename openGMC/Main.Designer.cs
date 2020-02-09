@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.label2 = new System.Windows.Forms.Label();
             this.GraphPB = new System.Windows.Forms.PictureBox();
@@ -53,22 +52,14 @@
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.button3 = new System.Windows.Forms.Button();
+            this.LineRB = new System.Windows.Forms.RadioButton();
+            this.BarRB = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.GraphPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Lucida Console", 20F);
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(124, 27);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "CPM: --";
             // 
             // timer1
             // 
@@ -79,7 +70,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Lucida Console", 20F);
-            this.label2.Location = new System.Drawing.Point(12, 41);
+            this.label2.Location = new System.Drawing.Point(12, 19);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(268, 27);
             this.label2.TabIndex = 1;
@@ -163,14 +154,14 @@
             // numericUpDown1
             // 
             this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDown1.Increment = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
             this.numericUpDown1.Location = new System.Drawing.Point(769, 47);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             300,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
@@ -178,7 +169,7 @@
             this.numericUpDown1.Size = new System.Drawing.Size(54, 20);
             this.numericUpDown1.TabIndex = 9;
             this.numericUpDown1.Value = new decimal(new int[] {
-            57,
+            32,
             0,
             0,
             0});
@@ -286,9 +277,9 @@
             this.groupBox2.Controls.Add(this.checkBox1);
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.button7);
-            this.groupBox2.Location = new System.Drawing.Point(838, 316);
+            this.groupBox2.Location = new System.Drawing.Point(838, 331);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(109, 91);
+            this.groupBox2.Size = new System.Drawing.Size(109, 76);
             this.groupBox2.TabIndex = 17;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Logging";
@@ -332,11 +323,37 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // LineRB
+            // 
+            this.LineRB.AutoSize = true;
+            this.LineRB.Checked = true;
+            this.LineRB.Location = new System.Drawing.Point(838, 286);
+            this.LineRB.Name = "LineRB";
+            this.LineRB.Size = new System.Drawing.Size(45, 17);
+            this.LineRB.TabIndex = 21;
+            this.LineRB.TabStop = true;
+            this.LineRB.Text = "Line";
+            this.LineRB.UseVisualStyleBackColor = true;
+            this.LineRB.CheckedChanged += new System.EventHandler(this.LineRB_CheckedChanged);
+            // 
+            // BarRB
+            // 
+            this.BarRB.AutoSize = true;
+            this.BarRB.Location = new System.Drawing.Point(889, 286);
+            this.BarRB.Name = "BarRB";
+            this.BarRB.Size = new System.Drawing.Size(41, 17);
+            this.BarRB.TabIndex = 22;
+            this.BarRB.Text = "Bar";
+            this.BarRB.UseVisualStyleBackColor = true;
+            this.BarRB.CheckedChanged += new System.EventHandler(this.BarRB_CheckedChanged);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(967, 423);
+            this.Controls.Add(this.BarRB);
+            this.Controls.Add(this.LineRB);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.checkBox3);
             this.Controls.Add(this.checkBox2);
@@ -353,7 +370,6 @@
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.GraphPB);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "Main";
             this.Text = "openGMC";
@@ -371,8 +387,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox GraphPB;
@@ -396,6 +410,8 @@
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.RadioButton LineRB;
+        private System.Windows.Forms.RadioButton BarRB;
     }
 }
 

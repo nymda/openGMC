@@ -37,10 +37,11 @@ namespace openGMC
         public bool highCps = false;
         public bool showNumeric = true;
         public bool evnText = false;
+        public bool barGraph = false;
 
         public int awaitAutoCount = 0;
 
-        public int listLen = 57;
+        public int listLen = 32;
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -133,15 +134,6 @@ namespace openGMC
                 }
                 catch {}
 
-                if (s5Count == 5)
-                {
-                    s5Count = 0;
-                    this.Invoke(new MethodInvoker(delegate ()
-                    {
-                        label1.Text = "CPM: " + CPM.ToString();
-                    }));
-                }
-
                 if (logging && logPahtSet)
                 {
                     string tickBar = "";
@@ -159,6 +151,7 @@ namespace openGMC
 
         public void shiftReg(int inst)
         {
+            List<Int32> data = new List<Int32> { };
 
             int pxOneBar = 700 / listLen;
 
@@ -186,95 +179,122 @@ namespace openGMC
                 }
             }
 
-            string prnt = "";
             for(int countVarString = 0; countVarString < listLen; countVarString++)
             {
-                prnt += arr[countVarString] + ",";
+                data.Add(arr[countVarString]);
             }
 
-            if (showNumeric)
-            {
-                drawGraphFromString(prnt, 250, 285, 283, 275);
-            }
-            else
-            {
-                drawGraphFromString(prnt, 263, 298, 296, 288);
-            }
+            bool autoZoom = checkBox3.Checked;
+            bool barGraph = BarRB.Checked;
+
+            graph_draw(data.ToArray(), showNumeric, barGraph, autoZoom);
 
         }
 
         public Bitmap grph = new Bitmap(700, 300);
 
-        public void drawGraphFromString(string gstring, int zoom_upper, int str_height, int line_height, int base_height)
+        public void graph_draw(int[] data, bool showNum, bool barGraph, bool autoZoom)
         {
-            int zoom = 25;
-            int highest = 1;
+            int zoom = 0;
+            this.Invoke(new MethodInvoker(delegate (){ zoom = trackBar1.Value; }));
 
+            int points_num = data.Length;
+            Pen thiccBlack = new Pen(Color.Black, 2);
+            Pen thiccRed = new Pen(Color.Red, 2);
+            Graphics g = Graphics.FromImage(grph);
+            int centerPoint = grph.Width / 2;
+            int fits = 700 / points_num;
+            Console.WriteLine(fits);
             Font font = new Font("Lucida Console", 10.0f);
             string time = DateTime.Now.ToString();
-            this.Invoke(new MethodInvoker(delegate (){ zoom = trackBar1.Value; }));
             List<Point> points = new List<Point> { };
-            List<String> values = new List<String> { };
-            gstring = gstring.Remove(gstring.Length - 1);
-            string[] itms = gstring.Split(',');
-            int length = itms.Length;
-            Graphics g = Graphics.FromImage(grph);
-            g.SmoothingMode = SmoothingMode.AntiAlias;
+            int halfNum = points_num / 2;
+            int width = 0;
+            int externalPointer = 0;
+
             g.FillRectangle(Brushes.LightGray, 0, 0, 700, 300);
+            g.DrawString(time, font, Brushes.Black, 5, 5);
 
-            int barWidth = Convert.ToInt32(Math.Floor(Convert.ToDouble(700 / Convert.ToDouble(listLen))));
-            int currentPos = barWidth / 2;
-
-            for(int i = 0; i < length; i++) 
+            for (int i = 0; i < halfNum; i++)
             {
-                points.Add(new Point(690 - currentPos, base_height - Int32.Parse(itms[i].ToString()) * zoom));
-
-                if(useAutoZoom && (Int32.Parse(itms[i].ToString()) * zoom) > zoom_upper)
+                points.Add(new Point(centerPoint + width, 0));
+                externalPointer++;
+                width += fits;
+            }
+            width = 0;
+            for (int i = 0; i < halfNum; i++)
+            {
+                points.Add(new Point(centerPoint - width, 0));
+                externalPointer++;
+                width += fits;
+            }
+            points = points.OrderByDescending(p => p.X).ToList();
+            points = points.Distinct().ToList();
+            int redoCount = 0;
+            int addTobarwidth = 0;
+            if (barGraph)
+            {
+                int highestnum = 0;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+                g.DrawLine(thiccBlack, new Point(0, 281), new Point(700, 281));
+                g.DrawLine(thiccBlack, new Point(0, 282), new Point(700, 282));
+                g.DrawLine(thiccBlack, new Point(0, 283), new Point(700, 283));
+                int prevLeftPoint = 0;
+                foreach (Point p in points)
                 {
-                    if(zoom > 6)
+                    try
                     {
-                        zoom -= 5;
+                        if (data[redoCount - 1] > highestnum) { highestnum = data[redoCount - 1]; }
+                        int height = 278 - data[redoCount - 1] * zoom;
+                        if (height < 25 && autoZoom) { this.Invoke(new MethodInvoker(delegate () { trackBar1.Value -= 1; })); }
                     }
-                    else if(zoom < 6 && zoom > 1)
+                    catch { }
+                    redoCount++;
+                    if (showNum)
                     {
-                        zoom -= 1;
+                        if (data[redoCount - 1].ToString().Length > 1) { g.DrawString(data[redoCount - 1].ToString(), font, Brushes.Black, new Point(p.X - 10, 285 - p.Y)); }
+                        else { g.DrawString(data[redoCount - 1].ToString(), font, Brushes.Black, new Point(p.X - 5, 285 - p.Y)); }
                     }
-                    this.Invoke(new MethodInvoker(delegate () { trackBar1.Value = zoom; }));
-                }
-
-                values.Add(itms[i].ToString());
-                currentPos += barWidth;
-
-                if(Convert.ToInt32(itms[i]) > highest)
-                {
-                    highest = Convert.ToInt32(itms[i]);
+                    g.DrawLine(thiccBlack, new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X - fits / 2, 300));
+                    g.DrawLine(thiccBlack, new Point(p.X + (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X + fits / 2, 300));
+                    g.DrawLine(thiccBlack, new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X + (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom));
+                    if (p.X - fits / 2 != prevLeftPoint) { addTobarwidth = 1; }
+                    else { addTobarwidth = 0; }
+                    prevLeftPoint = p.X + fits / 2;
                 }
             }
-            int counter = 0;
-            foreach (Point p in points)
+            else
             {
-                try
+                int highestnum = 0;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                Point prevPoint = new Point(0, 0);
+                foreach (Point p in points)
                 {
-                    if(Convert.ToInt32(values[counter]) == highest && Convert.ToInt32(values[counter]) > 5)
+                    try
                     {
-                        g.DrawString(values[counter], font, Brushes.Red, new Point(p.X - 5, p.Y - 15));
+                        if (data[redoCount - 1] > highestnum) { highestnum = data[redoCount - 1]; }
+                        int height = 278 - data[redoCount - 1] * zoom;
+                        if (height < 25 && autoZoom) { this.Invoke(new MethodInvoker(delegate () { trackBar1.Value -= 1; })); }
                     }
-
-                    if((Convert.ToInt32(values[counter]) < 10)){
-                        g.DrawString(values[counter], font, Brushes.Black, new Point(p.X - 6, str_height));
-                    }
-                    else
+                    catch { }
+                    redoCount++;
+                    if (showNum)
                     {
-                        g.DrawString("+", font, Brushes.Black, new Point(p.X - 6, str_height));
-                    }                  
-                    g.DrawLine(Pens.Black, p, new Point(p.X, line_height));
-                    counter++;
-                    if(counter > 1){g.DrawLine(Pens.OrangeRed, points[counter - 1], points[counter - 2]);}
+                        if (data[redoCount - 1].ToString().Length > 1) { g.DrawString(data[redoCount - 1].ToString(), font, Brushes.Black, new Point(p.X - 10, 283 - p.Y)); }
+                        else { g.DrawString(data[redoCount - 1].ToString(), font, Brushes.Black, new Point(p.X - 5, 283 - p.Y)); }
+                    }
+                    g.DrawLine(thiccBlack, new Point(p.X, 278 - data[redoCount - 1] * zoom), new Point(p.X, 280));
+                    if (prevPoint != new Point(0, 0))
+                    {
+                        g.DrawLine(thiccRed, new Point(p.X, 278 - data[redoCount - 1] * zoom), prevPoint);
+                    }
+                    prevPoint = new Point(p.X, 278 - data[redoCount - 1] * zoom);
                 }
-                catch {}
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+                g.DrawLine(thiccBlack, new Point(0, 281), new Point(700, 281));
+                g.DrawLine(thiccBlack, new Point(0, 282), new Point(700, 282));
+                g.DrawLine(thiccBlack, new Point(0, 283), new Point(700, 283));
             }
-            g.DrawString("Z: " + zoom, font, Brushes.Black, new Point(10, 25));
-            g.DrawString(time, font, Brushes.Black, new Point(10, 10));
             GraphPB.Image = grph;
         }
 
@@ -427,6 +447,16 @@ namespace openGMC
         private void button3_Click(object sender, EventArgs e)
         {
             alert("info", "sh_info");
+        }
+
+        private void LineRB_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BarRB_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
