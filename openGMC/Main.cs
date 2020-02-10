@@ -458,5 +458,12 @@ namespace openGMC
         {
 
         }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Form PortSearch = new PortSearch();
+            PortSearch.Show();
+
+        }
     }
 }
