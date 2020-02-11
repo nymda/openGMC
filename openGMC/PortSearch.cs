@@ -25,17 +25,9 @@ namespace openGMC
         private void button1_Click(object sender, EventArgs e)
         {
             label1.Text = "Scanning...";
-
             List<Int32> ports = new List<Int32> { -1 };
-
-            if (radioButton1.Checked)
-            {
-                ports = scanPorts(LOW);
-            }
-            else
-            {
-                ports = scanPorts(HIGH);
-            }
+            if (radioButton1.Checked) { ports = scanPorts(LOW); }
+            else{ ports = scanPorts(HIGH); }
 
             foreach(int i in ports)
             {
@@ -56,10 +48,7 @@ namespace openGMC
                     SPORT.Open();
                     ports.Add(i);
                 }
-                catch
-                {
-
-                }
+                catch { }
             }
             return ports;
         }
