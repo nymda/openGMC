@@ -3,20 +3,22 @@ open software for the GMC-300E, and probably other GMC model, Geiger counters.
 
 Current features:
 
--Graph of CPS
+-CPS line chart
 
--CPM display
+-CPS bar graph
 
--Snapshot at new peak
+-Snapshotting
 
--Peak CPS display
+-Auto snapshot as peak
 
 -Logging to file
+
+-Graph to text file
 
 Known limitations:
 
 -Incompatable with some counters from the GMC range (cant afford to test all of em :c)
 
--Graph cannot display numbers over 9 on the lower numeric display without overlapping
+-Graph cannot display numbers over 9 on the lower numeric display without overlapping (partially fixed)
 
--CPM display internally calculated, sometimes inaccurate
+-CPM display internally calculated, sometimes inaccurate (Removed)
