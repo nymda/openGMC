@@ -236,9 +236,11 @@ namespace openGMC
             {
                 int highestnum = 0;
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+
                 g.DrawLine(thiccBlack, new Point(0, 281), new Point(700, 281));
                 g.DrawLine(thiccBlack, new Point(0, 282), new Point(700, 282));
                 g.DrawLine(thiccBlack, new Point(0, 283), new Point(700, 283));
+
                 int prevLeftPoint = 0;
                 foreach (Point p in points)
                 {
@@ -255,9 +257,19 @@ namespace openGMC
                         if (data[redoCount - 1].ToString().Length > 1) { g.DrawString(data[redoCount - 1].ToString(), font, Brushes.Black, new Point(p.X - 10, 285 - p.Y)); }
                         else { g.DrawString(data[redoCount - 1].ToString(), font, Brushes.Black, new Point(p.X - 5, 285 - p.Y)); }
                     }
-                    g.DrawLine(thiccBlack, new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X - fits / 2, 300));
-                    g.DrawLine(thiccBlack, new Point(p.X + (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X + fits / 2, 300));
-                    g.DrawLine(thiccBlack, new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X + (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom));
+
+                    //g.DrawRectangle(Pens.Black, )
+
+                    Rectangle r = new Rectangle((p.X - (fits + addTobarwidth) / 2), (280 - data[redoCount - 1] * zoom), 5, 5);
+
+                    Point upperLeft = new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom);
+                    Point lowerRight = new Point(p.X + fits / 2, 300);
+
+                    g.DrawRectangle(thiccBlack, upperLeft.X, upperLeft.Y, lowerRight.X - upperLeft.X, upperLeft.Y);
+
+                    //g.DrawLine(thiccBlack, new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X - fits / 2, 300));
+                    //g.DrawLine(thiccBlack, new Point(p.X + (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X + fits / 2, 300));
+                    //g.DrawLine(thiccBlack, new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X + (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom));
                     if (p.X - fits / 2 != prevLeftPoint) { addTobarwidth = 1; }
                     else { addTobarwidth = 0; }
                     prevLeftPoint = p.X + fits / 2;

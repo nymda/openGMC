@@ -46,9 +46,11 @@ namespace openGMC
                 try
                 {
                     SPORT.Open();
+                    SPORT.Write("0");
                     ports.Add(i);
                 }
                 catch { }
+                SPORT.Close();
             }
             return ports;
         }
