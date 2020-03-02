@@ -214,6 +214,7 @@ namespace openGMC
 
             g.FillRectangle(Brushes.LightGray, 0, 0, 700, 300);
             g.DrawString(time, font, Brushes.Black, 5, 5);
+            g.DrawString("zoom level: " + zoom.ToString(), font, Brushes.Black, 5, 20);
 
             for (int i = 0; i < halfNum; i++)
             {
