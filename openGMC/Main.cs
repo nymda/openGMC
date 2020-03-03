@@ -39,9 +39,21 @@ namespace openGMC
         public bool evnText = false;
         public bool barGraph = false;
 
+        public Color Bars = Color.Black;
+        public Color Lines = Color.Red;
+        public Color Background = Color.LightGray;
+        public Color text = Color.Black;
+
+        public bool Poles = true;
+        public bool solidBars = false;
+        public bool antiAliasing = true;
+        public bool showtime = true;
+        public bool showZoomLvl = true;
+        public bool showComPort = false;
+
         public int awaitAutoCount = 0;
 
-        public int listLen = 32;
+        public int listLen = 34;
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -199,12 +211,11 @@ namespace openGMC
             this.Invoke(new MethodInvoker(delegate (){ zoom = trackBar1.Value; }));
 
             int points_num = data.Length;
-            Pen thiccBlack = new Pen(Color.Black, 2);
-            Pen thiccRed = new Pen(Color.Red, 2);
+            Pen thiccBars = new Pen(Bars, 2);
+            Pen thiccLines = new Pen(Lines, 2);
             Graphics g = Graphics.FromImage(grph);
             int centerPoint = grph.Width / 2;
             int fits = 700 / points_num;
-            Console.WriteLine(fits);
             Font font = new Font("Lucida Console", 10.0f);
             string time = DateTime.Now.ToString();
             List<Point> points = new List<Point> { };
@@ -212,9 +223,10 @@ namespace openGMC
             int width = 0;
             int externalPointer = 0;
 
-            g.FillRectangle(Brushes.LightGray, 0, 0, 700, 300);
-            g.DrawString(time, font, Brushes.Black, 5, 5);
-            g.DrawString("zoom level: " + zoom.ToString(), font, Brushes.Black, 5, 20);
+            g.FillRectangle(new SolidBrush(Background), 0, 0, 700, 300);
+            if (showtime){ g.DrawString(time, font, new SolidBrush(text), 5, 5); }
+            if (showZoomLvl){ g.DrawString("zoom level: " + zoom.ToString(), font, new SolidBrush(text), 5, 20); }
+            if (showComPort) { g.DrawString("Port: " + textBox1.Text, font, new SolidBrush(text), 5, 35); }
 
             for (int i = 0; i < halfNum; i++)
             {
@@ -236,39 +248,42 @@ namespace openGMC
             if (barGraph)
             {
                 int highestnum = 0;
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-
-                g.DrawLine(thiccBlack, new Point(0, 281), new Point(700, 281));
-                g.DrawLine(thiccBlack, new Point(0, 282), new Point(700, 282));
-                g.DrawLine(thiccBlack, new Point(0, 283), new Point(700, 283));
+                if (!antiAliasing){ g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None; }
+                else { g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias; }
 
                 int prevLeftPoint = 0;
                 foreach (Point p in points)
                 {
                     try
                     {
-                        if (data[redoCount - 1] > highestnum) { highestnum = data[redoCount - 1]; }
-                        int height = 278 - data[redoCount - 1] * zoom;
-                        if (height < 25 && autoZoom) {
-                            setZoom(data[redoCount - 1], zoom);
+                        if (redoCount > 1)
+                        {
+                            if (data[redoCount - 1] > highestnum) { highestnum = data[redoCount - 1]; }
+                            int height = 278 - data[redoCount - 1] * zoom;
+                            if (height < 25 && autoZoom)
+                            {
+                                setZoom(data[redoCount - 1], zoom);
+                            }
                         }
                     }
                     catch { }
                     redoCount++;
                     if (showNum)
                     {
-                        if (data[redoCount - 1].ToString().Length > 1) { g.DrawString(data[redoCount - 1].ToString(), font, Brushes.Black, new Point(p.X - 10, 285 - p.Y)); }
-                        else { g.DrawString(data[redoCount - 1].ToString(), font, Brushes.Black, new Point(p.X - 5, 285 - p.Y)); }
+                        if (data[redoCount - 1].ToString().Length > 1) { g.DrawString(data[redoCount - 1].ToString(), font, new SolidBrush(text), new Point(p.X - 10, 285 - p.Y)); }
+                        else { g.DrawString(data[redoCount - 1].ToString(), font, new SolidBrush(text), new Point(p.X - 5, 285 - p.Y)); }
                     }
                     Rectangle r = new Rectangle((p.X - (fits + addTobarwidth) / 2), (280 - data[redoCount - 1] * zoom), 5, 5);
 
-                    Point upperLeft = new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom);
+                    Point upperLeft = new Point(p.X - (fits + addTobarwidth) / 2, 282 - data[redoCount - 1] * zoom);
                     Point lowerRight = new Point(p.X + fits / 2, 300);
-                    g.DrawRectangle(thiccBlack, upperLeft.X, upperLeft.Y, lowerRight.X - upperLeft.X, 300 - upperLeft.Y);
 
-                    //g.DrawLine(thiccBlack, new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X - fits / 2, 300));
-                    //g.DrawLine(thiccBlack, new Point(p.X + (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X + fits / 2, 300));
-                    //g.DrawLine(thiccBlack, new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X + (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom));
+                    if (!solidBars){ g.DrawRectangle(thiccBars, upperLeft.X, upperLeft.Y, lowerRight.X - upperLeft.X, 282 - upperLeft.Y); }
+                    else{ g.FillRectangle(new SolidBrush(thiccBars.Color), upperLeft.X, upperLeft.Y, lowerRight.X - upperLeft.X, 282 - upperLeft.Y); }
+
+                    //g.DrawLine(thiccBars, new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X - fits / 2, 300));
+                    //g.DrawLine(thiccBars, new Point(p.X + (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X + fits / 2, 300));
+                    //g.DrawLine(thiccBars, new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X + (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom));
                     if (p.X - fits / 2 != prevLeftPoint) { addTobarwidth = 1; }
                     else { addTobarwidth = 0; }
                     prevLeftPoint = p.X + fits / 2;
@@ -277,37 +292,47 @@ namespace openGMC
             else
             {
                 int highestnum = 0;
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                if (antiAliasing) { g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias; }
+                else { g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None; }
+
                 Point prevPoint = new Point(0, 0);
                 foreach (Point p in points)
                 {
                     try
                     {
-                        if (data[redoCount - 1] > highestnum) { highestnum = data[redoCount - 1]; }
-                        int height = 278 - data[redoCount - 1] * zoom;
-                        if (height < 25 && autoZoom){
-                            setZoom(data[redoCount - 1], zoom);
+                        if(redoCount > 1)
+                        {
+                            if (data[redoCount - 1] > highestnum) { highestnum = data[redoCount - 1]; }
+                            int height = 278 - data[redoCount - 1] * zoom;
+                            if (height < 25 && autoZoom)
+                            {
+                                setZoom(data[redoCount - 1], zoom);
+                            }
                         }
                     }
                     catch { }
                     redoCount++;
                     if (showNum)
                     {
-                        if (data[redoCount - 1].ToString().Length > 1) { g.DrawString(data[redoCount - 1].ToString(), font, Brushes.Black, new Point(p.X - 10, 283 - p.Y)); }
-                        else { g.DrawString(data[redoCount - 1].ToString(), font, Brushes.Black, new Point(p.X - 5, 283 - p.Y)); }
+                        if (data[redoCount - 1].ToString().Length > 1) { g.DrawString(data[redoCount - 1].ToString(), font, new SolidBrush(text), new Point(p.X - 10, 283 - p.Y)); }
+                        else { g.DrawString(data[redoCount - 1].ToString(), font, new SolidBrush(text), new Point(p.X - 5, 285 - p.Y)); }
                     }
-                    g.DrawLine(thiccBlack, new Point(p.X, 278 - data[redoCount - 1] * zoom), new Point(p.X, 280));
+                    if (Poles){ g.DrawLine(thiccBars, new Point(p.X, 278 - data[redoCount - 1] * zoom), new Point(p.X, 282)); }
+
                     if (prevPoint != new Point(0, 0))
                     {
-                        g.DrawLine(thiccRed, new Point(p.X, 278 - data[redoCount - 1] * zoom), prevPoint);
+                        g.DrawLine(thiccLines, new Point(p.X, 278 - data[redoCount - 1] * zoom), prevPoint);
                     }
                     prevPoint = new Point(p.X, 278 - data[redoCount - 1] * zoom);
                 }
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.DrawLine(thiccBlack, new Point(0, 281), new Point(700, 281));
-                g.DrawLine(thiccBlack, new Point(0, 282), new Point(700, 282));
-                g.DrawLine(thiccBlack, new Point(0, 283), new Point(700, 283));
+                if (!antiAliasing){ g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None; }
+                else { g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias; }
             }
+
+            g.DrawLine(Pens.Black, new Point(0, 281), new Point(700, 281));
+            g.DrawLine(Pens.Black, new Point(0, 282), new Point(700, 282));
+            g.DrawLine(Pens.Black, new Point(0, 283), new Point(700, 283));
+
             GraphPB.Image = grph;
         }
 
@@ -488,6 +513,94 @@ namespace openGMC
             Form PortSearch = new PortSearch();
             PortSearch.Show();
 
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            //Set line colour
+            colorDialog1.AnyColor = true;
+            colorDialog1.SolidColorOnly = true;
+            colorDialog1.Color = Lines;
+
+            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            {
+                Lines = colorDialog1.Color;
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            //set bar colour
+            colorDialog2.AnyColor = true;
+            colorDialog2.SolidColorOnly = true;
+            colorDialog2.Color = Bars;
+
+            if (colorDialog2.ShowDialog() == DialogResult.OK)
+            {
+                Bars = colorDialog2.Color;
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            //set BG colour
+            colorDialog3.AnyColor = true;
+            colorDialog3.SolidColorOnly = true;
+            colorDialog3.Color = Background;
+
+            if (colorDialog3.ShowDialog() == DialogResult.OK)
+            {
+                Background = colorDialog3.Color;
+            }
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            //set text colour
+            colorDialog4.AnyColor = true;
+            colorDialog4.SolidColorOnly = true;
+            colorDialog4.Color = text;
+
+            if (colorDialog4.ShowDialog() == DialogResult.OK)
+            {
+                text = colorDialog4.Color;
+            }
+        }
+
+        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        {
+            //line poles
+            Poles = !Poles;
+        }
+
+        private void checkBox5_CheckedChanged(object sender, EventArgs e)
+        {
+            //solid bars
+            solidBars = !solidBars;
+        }
+
+        private void checkBox6_CheckedChanged(object sender, EventArgs e)
+        {
+            //antialising
+            antiAliasing = !antiAliasing;
+        }
+
+        private void checkBox9_CheckedChanged(object sender, EventArgs e)
+        {
+            //time
+            showtime = !showtime;
+        }
+
+        private void checkBox8_CheckedChanged(object sender, EventArgs e)
+        {
+            //zoom lvl
+            showZoomLvl = !showZoomLvl;
+        }
+
+        private void checkBox12_CheckedChanged(object sender, EventArgs e)
+        {
+            //COM port
+            showComPort = !showComPort;
         }
     }
 }
