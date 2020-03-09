@@ -57,22 +57,23 @@
             this.LineRB = new System.Windows.Forms.RadioButton();
             this.BarRB = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
-            this.checkBox6 = new System.Windows.Forms.CheckBox();
-            this.button8 = new System.Windows.Forms.Button();
-            this.button9 = new System.Windows.Forms.Button();
+            this.checkBox12 = new System.Windows.Forms.CheckBox();
             this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.checkBox9 = new System.Windows.Forms.CheckBox();
-            this.checkBox12 = new System.Windows.Forms.CheckBox();
+            this.button9 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
+            this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.checkBox5 = new System.Windows.Forms.CheckBox();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.colorDialog2 = new System.Windows.Forms.ColorDialog();
             this.colorDialog3 = new System.Windows.Forms.ColorDialog();
             this.colorDialog4 = new System.Windows.Forms.ColorDialog();
             this.label1 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.button10 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.GraphPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
@@ -400,82 +401,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Display settings";
             // 
-            // button5
+            // checkBox12
             // 
-            this.button5.Location = new System.Drawing.Point(6, 19);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(128, 31);
-            this.button5.TabIndex = 24;
-            this.button5.Text = "Colour (lines)";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
-            // 
-            // button6
-            // 
-            this.button6.Location = new System.Drawing.Point(6, 56);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(128, 31);
-            this.button6.TabIndex = 25;
-            this.button6.Text = "Colour (bars / poles)";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
-            // 
-            // checkBox4
-            // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Checked = true;
-            this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox4.Location = new System.Drawing.Point(274, 23);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(74, 17);
-            this.checkBox4.TabIndex = 26;
-            this.checkBox4.Text = "Line poles";
-            this.checkBox4.UseVisualStyleBackColor = true;
-            this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
-            // 
-            // checkBox5
-            // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.Location = new System.Drawing.Point(274, 46);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(72, 17);
-            this.checkBox5.TabIndex = 27;
-            this.checkBox5.Text = "Solid bars";
-            this.checkBox5.UseVisualStyleBackColor = true;
-            this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
-            // 
-            // checkBox6
-            // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.Checked = true;
-            this.checkBox6.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox6.Location = new System.Drawing.Point(274, 68);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(79, 17);
-            this.checkBox6.TabIndex = 28;
-            this.checkBox6.Text = "Antialiasing";
-            this.checkBox6.UseVisualStyleBackColor = true;
-            this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox6_CheckedChanged);
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(140, 19);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(128, 31);
-            this.button8.TabIndex = 29;
-            this.button8.Text = "Colour (background)";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
-            // 
-            // button9
-            // 
-            this.button9.Location = new System.Drawing.Point(140, 56);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(128, 31);
-            this.button9.TabIndex = 30;
-            this.button9.Text = "Colour (text)";
-            this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
+            this.checkBox12.AutoSize = true;
+            this.checkBox12.Location = new System.Drawing.Point(354, 68);
+            this.checkBox12.Name = "checkBox12";
+            this.checkBox12.Size = new System.Drawing.Size(101, 17);
+            this.checkBox12.TabIndex = 34;
+            this.checkBox12.Text = "Show COM port";
+            this.checkBox12.UseVisualStyleBackColor = true;
+            this.checkBox12.CheckedChanged += new System.EventHandler(this.checkBox12_CheckedChanged);
             // 
             // checkBox8
             // 
@@ -503,16 +438,82 @@
             this.checkBox9.UseVisualStyleBackColor = true;
             this.checkBox9.CheckedChanged += new System.EventHandler(this.checkBox9_CheckedChanged);
             // 
-            // checkBox12
+            // button9
             // 
-            this.checkBox12.AutoSize = true;
-            this.checkBox12.Location = new System.Drawing.Point(354, 68);
-            this.checkBox12.Name = "checkBox12";
-            this.checkBox12.Size = new System.Drawing.Size(101, 17);
-            this.checkBox12.TabIndex = 34;
-            this.checkBox12.Text = "Show COM port";
-            this.checkBox12.UseVisualStyleBackColor = true;
-            this.checkBox12.CheckedChanged += new System.EventHandler(this.checkBox12_CheckedChanged);
+            this.button9.Location = new System.Drawing.Point(140, 56);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(128, 31);
+            this.button9.TabIndex = 30;
+            this.button9.Text = "Colour (text)";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(140, 19);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(128, 31);
+            this.button8.TabIndex = 29;
+            this.button8.Text = "Colour (background)";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // checkBox6
+            // 
+            this.checkBox6.AutoSize = true;
+            this.checkBox6.Checked = true;
+            this.checkBox6.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox6.Location = new System.Drawing.Point(274, 68);
+            this.checkBox6.Name = "checkBox6";
+            this.checkBox6.Size = new System.Drawing.Size(79, 17);
+            this.checkBox6.TabIndex = 28;
+            this.checkBox6.Text = "Antialiasing";
+            this.checkBox6.UseVisualStyleBackColor = true;
+            this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox6_CheckedChanged);
+            // 
+            // checkBox5
+            // 
+            this.checkBox5.AutoSize = true;
+            this.checkBox5.Location = new System.Drawing.Point(274, 46);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.Size = new System.Drawing.Size(72, 17);
+            this.checkBox5.TabIndex = 27;
+            this.checkBox5.Text = "Solid bars";
+            this.checkBox5.UseVisualStyleBackColor = true;
+            this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
+            // 
+            // checkBox4
+            // 
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Checked = true;
+            this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox4.Location = new System.Drawing.Point(274, 23);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(74, 17);
+            this.checkBox4.TabIndex = 26;
+            this.checkBox4.Text = "Line poles";
+            this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(6, 56);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(128, 31);
+            this.button6.TabIndex = 25;
+            this.button6.Text = "Colour (bars / poles)";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(6, 19);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(128, 31);
+            this.button5.TabIndex = 24;
+            this.button5.Text = "Colour (lines)";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // label1
             // 
@@ -536,11 +537,22 @@
             this.label7.TabIndex = 25;
             this.label7.Text = "(At least pretend it is, im not a lawyer)";
             // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(17, 413);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(75, 23);
+            this.button10.TabIndex = 26;
+            this.button10.Text = "Print";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(967, 523);
+            this.Controls.Add(this.button10);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox3);
@@ -625,6 +637,7 @@
         private System.Windows.Forms.ColorDialog colorDialog4;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button button10;
     }
 }
 

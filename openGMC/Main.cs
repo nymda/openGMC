@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing.Printing;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -217,6 +219,7 @@ namespace openGMC
             int centerPoint = grph.Width / 2;
             int fits = 700 / points_num;
             Font font = new Font("Lucida Console", 10.0f);
+            Font TitlesFont = new Font("Lucida Console", 15.0f);
             string time = DateTime.Now.ToString();
             List<Point> points = new List<Point> { };
             int halfNum = points_num / 2;
@@ -224,9 +227,9 @@ namespace openGMC
             int externalPointer = 0;
 
             g.FillRectangle(new SolidBrush(Background), 0, 0, 700, 300);
-            if (showtime){ g.DrawString(time, font, new SolidBrush(text), 5, 5); }
-            if (showZoomLvl){ g.DrawString("zoom level: " + zoom.ToString(), font, new SolidBrush(text), 5, 20); }
-            if (showComPort) { g.DrawString("Port: " + textBox1.Text, font, new SolidBrush(text), 5, 35); }
+            if (showtime){ g.DrawString(time, TitlesFont, new SolidBrush(text), 5, 5); }
+            if (showZoomLvl){ g.DrawString("zoom level: " + zoom.ToString(), TitlesFont, new SolidBrush(text), 5, 30); }
+            if (showComPort) { g.DrawString("Port: " + textBox1.Text, TitlesFont, new SolidBrush(text), 5, 45); }
 
             for (int i = 0; i < halfNum; i++)
             {
@@ -601,6 +604,25 @@ namespace openGMC
         {
             //COM port
             showComPort = !showComPort;
+        }
+
+        public void printSnap()
+        {
+            PrintDocument pd = new PrintDocument();
+            pd.PrintPage += delegate (object sender1, PrintPageEventArgs e1)
+            {
+                Bitmap turned = (Bitmap)GraphPB.Image;
+                Bitmap bw = turned.Clone(new Rectangle(0, 0, turned.Width, turned.Height), PixelFormat.Format1bppIndexed);
+                bw.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                e1.Graphics.DrawImage(new Bitmap(bw, 168, 384), new Point(0, 0));
+                pd.PrinterSettings.PrinterName = "POS58 Printer";
+            };
+            pd.Print();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            printSnap();
         }
     }
 }
