@@ -218,8 +218,8 @@ namespace openGMC
             Graphics g = Graphics.FromImage(grph);
             int centerPoint = grph.Width / 2;
             int fits = 700 / points_num;
-            Font font = new Font("Lucida Console", 10.0f);
-            Font TitlesFont = new Font("Lucida Console", 15.0f);
+            Font font = new Font("Lucida Console", 10.0f, FontStyle.Bold);
+            Font TitlesFont = new Font("Lucida Console", 15.0f, FontStyle.Bold);
             string time = DateTime.Now.ToString();
             List<Point> points = new List<Point> { };
             int halfNum = points_num / 2;
@@ -612,12 +612,23 @@ namespace openGMC
             pd.PrintPage += delegate (object sender1, PrintPageEventArgs e1)
             {
                 Bitmap turned = (Bitmap)GraphPB.Image;
-                Bitmap bw = turned.Clone(new Rectangle(0, 0, turned.Width, turned.Height), PixelFormat.Format1bppIndexed);
+                Bitmap bw = (Bitmap)turned.Clone();
+                bw = darkenImg(bw);
                 bw.RotateFlip(RotateFlipType.Rotate270FlipNone);
                 e1.Graphics.DrawImage(new Bitmap(bw, 168, 384), new Point(0, 0));
                 pd.PrinterSettings.PrinterName = "POS58 Printer";
             };
             pd.Print();
+        }
+
+        public Bitmap darkenImg(Bitmap b)
+        {
+            Graphics g = Graphics.FromImage(b);
+            Color darkTrans = Color.FromArgb(64, 0, 0, 0);
+            Bitmap dtrans = new Bitmap(b.Width, b.Height);
+            g.DrawImage(b, 0, 0);
+            g.FillRectangle(new SolidBrush(darkTrans), 0, 0, b.Width, b.Height);
+            return b;
         }
 
         private void button10_Click(object sender, EventArgs e)
