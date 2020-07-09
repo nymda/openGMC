@@ -9,10 +9,12 @@ using System.Drawing.Printing;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Windows.Threading;
 
 namespace openGMC
 {
@@ -37,7 +39,7 @@ namespace openGMC
         public List<String> bars = new List<String> { };
         public bool useAutoZoom = true;
         public bool highCps = false;
-        public bool showNumeric = true;
+        public bool showNumeric = false;
         public bool evnText = false;
         public bool barGraph = false;
 
@@ -50,16 +52,44 @@ namespace openGMC
         public bool solidBars = false;
         public bool antiAliasing = true;
         public bool showtime = true;
-        public bool showZoomLvl = true;
+        public bool showZoomLvl = false;
         public bool showComPort = false;
-
         public int awaitAutoCount = 0;
-
-        public int listLen = 34;
+        public int listLen = 60;
+        public List<int> CPMarr = new List<int> { };
+        public List<int> ACPM = new List<int> { };
+        public double AvCPM = 0;
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //there has got to be a better way
+            for(int i = 0; i < 60; i++)
+            {
+                CPMarr.Add(0);
+            }
+        }
 
+        public void pushCPM(int val)
+        {
+            CPMarr.Add(val);
+            CPMarr.RemoveAt(0);
+        }
+
+        public int calcCPM()
+        {
+            int CPM = 0;
+            foreach(int i in CPMarr)
+            {
+                CPM += i;
+            }
+            return CPM;
+        }
+
+        public double getUSVH(int cpm)
+        {
+            //this looks close enough, i dont work at a nuclear reactor, fuck it
+            return Math.Round(cpm / 154.55, 5);
+            //if you do work at a nuclear reactor, why are you even here
         }
 
         public void beginData(string comPort)
@@ -86,7 +116,7 @@ namespace openGMC
             }
 
             sendCommand("<HEARTBEAT1>>");
-            
+
         }
 
         public void sendCommand(string command)
@@ -103,6 +133,7 @@ namespace openGMC
 
         }
 
+        int ACPMcount = 0;
         private void responseHandler(object sender, SerialDataReceivedEventArgs args)
         {
             int x = int.Parse(SPORT.ReadByte().ToString(), System.Globalization.NumberStyles.HexNumber);
@@ -138,20 +169,34 @@ namespace openGMC
                 CPM = Math.Ceiling(totalCount / minutesElapsed);
 
                 shiftReg(x);
+                pushCPM(x);
+
+                if (ACPMcount == 30)
+                {
+                    ACPM.Add(calcCPM());
+                    AvCPM = ACPM.Average();
+                    ACPMcount = 0;
+                }
+                else
+                {
+                    ACPMcount++;
+                }
 
                 try
                 {
                     this.Invoke(new MethodInvoker(delegate ()
                     {
+                        label9.Text = "uSV/h: " + getUSVH(calcCPM());
+                        label8.Text = "CPM: " + calcCPM();
                         label2.Text = "Total counts: " + totalCount.ToString();
                     }));
                 }
-                catch {}
+                catch { }
 
                 if (logging && logPahtSet)
                 {
                     string tickBar = "";
-                    for(int e = 0; e < x; e++)
+                    for (int e = 0; e < x; e++)
                     {
                         tickBar += "#";
                     }
@@ -169,7 +214,7 @@ namespace openGMC
 
             int pxOneBar = 700 / listLen;
 
-            if(arr.Count() < listLen)
+            if (arr.Count() < listLen)
             {
                 for (int countVarAdding = 0; countVarAdding < listLen; countVarAdding++)
                 {
@@ -181,28 +226,27 @@ namespace openGMC
 
             for (int countVarShift = 0; countVarShift < (listLen - 1); countVarShift++)
             {
-                if(pos > 0)
+                if (pos > 0)
                 {
                     arr[pos] = arr[pos - 1];
                     pos--;
                 }
-                if(pos == 0)
+                if (pos == 0)
                 {
                     arr[pos] = inst;
                     pos--;
                 }
             }
 
-            for(int countVarString = 0; countVarString < listLen; countVarString++)
+            for (int countVarString = 0; countVarString < listLen; countVarString++)
             {
                 data.Add(arr[countVarString]);
             }
 
-            bool autoZoom = checkBox3.Checked;
+            bool autoZoom = checkBox2.Checked;
             bool barGraph = BarRB.Checked;
 
             graph_draw(data.ToArray(), showNumeric, barGraph, autoZoom);
-
         }
 
         public Bitmap grph = new Bitmap(700, 300);
@@ -210,7 +254,7 @@ namespace openGMC
         public void graph_draw(int[] data, bool showNum, bool barGraph, bool autoZoom)
         {
             int zoom = 0;
-            this.Invoke(new MethodInvoker(delegate (){ zoom = trackBar1.Value; }));
+            this.Invoke(new MethodInvoker(delegate () { zoom = trackBar1.Value; }));
 
             int points_num = data.Length;
             Pen thiccBars = new Pen(Bars, 2);
@@ -219,7 +263,7 @@ namespace openGMC
             int centerPoint = grph.Width / 2;
             int fits = 700 / points_num;
             Font font = new Font("Lucida Console", 10.0f, FontStyle.Bold);
-            Font TitlesFont = new Font("Lucida Console", 15.0f, FontStyle.Bold);
+            Font TitlesFont = new Font("Lucida Console", 10.0f, FontStyle.Bold);
             string time = DateTime.Now.ToString();
             List<Point> points = new List<Point> { };
             int halfNum = points_num / 2;
@@ -227,9 +271,11 @@ namespace openGMC
             int externalPointer = 0;
 
             g.FillRectangle(new SolidBrush(Background), 0, 0, 700, 300);
-            if (showtime){ g.DrawString(time, TitlesFont, new SolidBrush(text), 5, 5); }
-            if (showZoomLvl){ g.DrawString("zoom level: " + zoom.ToString(), TitlesFont, new SolidBrush(text), 5, 30); }
+            if (showtime) { g.DrawString(time, TitlesFont, new SolidBrush(text), 5, 285); }
+            if (showZoomLvl) { g.DrawString("zoom level: " + zoom.ToString(), TitlesFont, new SolidBrush(text), 5, 30); }
             if (showComPort) { g.DrawString("Port: " + textBox1.Text, TitlesFont, new SolidBrush(text), 5, 45); }
+
+            Console.WriteLine(zoom);
 
             for (int i = 0; i < halfNum; i++)
             {
@@ -251,7 +297,7 @@ namespace openGMC
             if (barGraph)
             {
                 int highestnum = 0;
-                if (!antiAliasing){ g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None; }
+                if (!antiAliasing) { g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None; }
                 else { g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias; }
 
                 int prevLeftPoint = 0;
@@ -276,13 +322,13 @@ namespace openGMC
                         if (data[redoCount - 1].ToString().Length > 1) { g.DrawString(data[redoCount - 1].ToString(), font, new SolidBrush(text), new Point(p.X - 10, 285 - p.Y)); }
                         else { g.DrawString(data[redoCount - 1].ToString(), font, new SolidBrush(text), new Point(p.X - 5, 285 - p.Y)); }
                     }
-                    Rectangle r = new Rectangle((p.X - (fits + addTobarwidth) / 2), (280 - data[redoCount - 1] * zoom), 5, 5);
 
+                    Rectangle r = new Rectangle((p.X - (fits + addTobarwidth) / 2), (280 - data[redoCount - 1] * zoom), 5, 5);
                     Point upperLeft = new Point(p.X - (fits + addTobarwidth) / 2, 282 - data[redoCount - 1] * zoom);
                     Point lowerRight = new Point(p.X + fits / 2, 300);
 
-                    if (!solidBars){ g.DrawRectangle(thiccBars, upperLeft.X, upperLeft.Y, lowerRight.X - upperLeft.X, 282 - upperLeft.Y); }
-                    else{ g.FillRectangle(new SolidBrush(thiccBars.Color), upperLeft.X, upperLeft.Y, lowerRight.X - upperLeft.X, 282 - upperLeft.Y); }
+                    if (!solidBars) { g.DrawRectangle(thiccBars, upperLeft.X, upperLeft.Y, lowerRight.X - upperLeft.X, 282 - upperLeft.Y); }
+                    else { g.FillRectangle(new SolidBrush(thiccBars.Color), upperLeft.X, upperLeft.Y, lowerRight.X - upperLeft.X, 282 - upperLeft.Y); }
 
                     //g.DrawLine(thiccBars, new Point(p.X - (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X - fits / 2, 300));
                     //g.DrawLine(thiccBars, new Point(p.X + (fits + addTobarwidth) / 2, 280 - data[redoCount - 1] * zoom), new Point(p.X + fits / 2, 300));
@@ -298,12 +344,43 @@ namespace openGMC
                 if (antiAliasing) { g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias; }
                 else { g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None; }
 
+                int lalh = GraphPB.Height;
+                int rep = 1;
+
                 Point prevPoint = new Point(0, 0);
                 foreach (Point p in points)
                 {
+                    int h;
+                    int y;
+
+                    if(redoCount == 0)
+                    {
+                        y = 278 - 1 * zoom;
+                        h = y;
+                    }
+                    else
+                    {
+                        y = 278 - data[redoCount - 1] * zoom;
+                        h = y;
+                    }
+
+                    //for (int i = 0; i < 25; i++)
+                    while(h > 0 && h != 278)
+                    {
+                        SizeF ssize = g.MeasureString(rep.ToString(), font);
+                        if(h > ssize.Height && (h + 15) < lalh)
+                        {
+                            lalh = h;
+                            g.DrawString(rep.ToString(), font, Brushes.Black, 0, h - ssize.Height / 2);
+                            g.DrawLine(Pens.Black, new Point(0 + (int)ssize.Width, h), new Point(GraphPB.Width, h));
+                        }
+                        rep++;
+                        h -= (278 - y);
+                    }
+
                     try
                     {
-                        if(redoCount > 1)
+                        if (redoCount > 1)
                         {
                             if (data[redoCount - 1] > highestnum) { highestnum = data[redoCount - 1]; }
                             int height = 278 - data[redoCount - 1] * zoom;
@@ -320,7 +397,7 @@ namespace openGMC
                         if (data[redoCount - 1].ToString().Length > 1) { g.DrawString(data[redoCount - 1].ToString(), font, new SolidBrush(text), new Point(p.X - 10, 283 - p.Y)); }
                         else { g.DrawString(data[redoCount - 1].ToString(), font, new SolidBrush(text), new Point(p.X - 5, 285 - p.Y)); }
                     }
-                    if (Poles){ g.DrawLine(thiccBars, new Point(p.X, 278 - data[redoCount - 1] * zoom), new Point(p.X, 282)); }
+                    if (Poles) { g.DrawLine(thiccBars, new Point(p.X, 278 - data[redoCount - 1] * zoom), new Point(p.X, 282)); }
 
                     if (prevPoint != new Point(0, 0))
                     {
@@ -328,7 +405,7 @@ namespace openGMC
                     }
                     prevPoint = new Point(p.X, 278 - data[redoCount - 1] * zoom);
                 }
-                if (!antiAliasing){ g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None; }
+                if (!antiAliasing) { g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None; }
                 else { g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias; }
             }
 
@@ -342,7 +419,7 @@ namespace openGMC
         public void setZoom(int itemheight, int oldzoom)
         {
             int height = 278 - itemheight * oldzoom;
-            while(height < 25)
+            while (height < 25)
             {
                 height = 278 - itemheight * oldzoom;
                 oldzoom--;
@@ -376,7 +453,7 @@ namespace openGMC
                 GraphPB.Image.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + timeProcessed + ".png");
                 label4.Text = "Documents/" + timeProcessed + ".PNG";
             }
-            catch {}
+            catch { }
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -384,9 +461,9 @@ namespace openGMC
             listLen = Convert.ToInt32(numericUpDown1.Value);
         }
 
-        private void chart1_Click(object sender, EventArgs e) {}
+        private void chart1_Click(object sender, EventArgs e) { }
 
-        private void trackBar1_Scroll(object sender, EventArgs e) {}
+        private void trackBar1_Scroll(object sender, EventArgs e) { }
 
         private void DVOn_Click(object sender, EventArgs e)
         {
@@ -447,7 +524,7 @@ namespace openGMC
 
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    label6.Text = Path.GetFileName(dlg.FileName); 
+                    label6.Text = Path.GetFileName(dlg.FileName);
                     savePath = dlg.FileName;
                     logPahtSet = true;
                 }
@@ -635,5 +712,25 @@ namespace openGMC
         {
             printSnap();
         }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            timer2.Start();
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            WebClient w = new WebClient();
+            w.DownloadString("http://www.gmcmap.com/log2.asp?AID=" + textBox2.Text + "&GID=" + textBox3.Text + "&CPM=" + calcCPM() + "&ACPM=" + AvCPM + "&uSV=" + getUSVH(calcCPM()) + "&type=VWR2.60");
+        }
     }
+
+    enum graphLineMode
+    {
+        cons = 1,
+        half = 2,
+        quad = 4,
+        quin = 8
+    }
+
 }
